@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Educación Dual EMS: mapa y diagnóstico</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Idea de layout: dos sedes de aprendizaje. Azul = escuela, naranja = espacio laboral.
+   El color nombra siempre al grupo de actores; la franja dual recorre toda la página. */
+:root{
+  color-scheme:light;
+  --bg:#f3f5f7;--surface:#ffffff;--surface2:#e9eef2;--ink:#0f1a26;--ink2:#4a5a6c;--line:#d5dde5;
+  --g-esc:#2a78d6;--g-emp:#eb6834;--g-sub:#1baf7a;--g-est:#eda100;--g-gob:#e87ba4;--g-apo:#8391a1;
+  --s-a:#7b8794;--s-b:#6250d6;
+  --ok:#14804a;--warn:#a86a00;--bad:#c5302e;
+  --display:"Bricolage Grotesque","Trebuchet MS",sans-serif;--body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;--mono:"IBM Plex Mono",Consolas,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;
+  --bg:#10161d;--surface:#18202a;--surface2:#222c38;--ink:#eef2f6;--ink2:#a9b6c5;--line:#2f3b49;
+  --g-esc:#3987e5;--g-emp:#d95926;--g-sub:#199e70;--g-est:#c98500;--g-gob:#d55181;--g-apo:#7f8d9c;
+  --s-a:#94a0ad;--s-b:#9085e9;--ok:#46c07f;--warn:#e0a63a;--bad:#f07a78;
+}}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#10161d;--surface:#18202a;--surface2:#222c38;--ink:#eef2f6;--ink2:#a9b6c5;--line:#2f3b49;
+  --g-esc:#3987e5;--g-emp:#d95926;--g-sub:#199e70;--g-est:#c98500;--g-gob:#d55181;--g-apo:#7f8d9c;
+  --s-a:#94a0ad;--s-b:#9085e9;--ok:#46c07f;--warn:#e0a63a;--bad:#f07a78;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 var(--body)}
+h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.15;margin:0;text-wrap:balance}
+h2{font-size:clamp(24px,3vw,32px)}
+h3{font-size:17px}
+p{margin:0}
+a{color:inherit}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--g-esc);outline-offset:2px;border-radius:4px}
+.ic{width:1.25em;height:1.25em;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none;vertical-align:-.25em}
+.dualbar{height:5px;background:linear-gradient(90deg,var(--g-esc) 0 50%,var(--g-emp) 50% 100%)}
+header.top{position:sticky;top:0;z-index:30;background:var(--surface);border-bottom:1px solid var(--line)}
+.top-in{max-width:1240px;margin:0 auto;padding:10px 20px 0;display:flex;flex-direction:column;gap:6px}
+.brand{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.brand h1{font-size:20px}
+.brand span{color:var(--ink2);font-size:13px}
+nav.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+nav.tabs a{display:flex;align-items:center;gap:7px;padding:9px 12px;text-decoration:none;color:var(--ink2);font-weight:500;border-bottom:3px solid transparent;white-space:nowrap}
+nav.tabs a:hover{color:var(--ink)}
+nav.tabs a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--ink)}
+main{max-width:1240px;margin:0 auto;padding:26px 20px 56px}
+section.view{display:flex;flex-direction:column;gap:26px}
+section.view[hidden]{display:none}
+.lead{display:flex;flex-direction:column;gap:5px;max-width:800px}
+.lead p{color:var(--ink2);font-size:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.card>h3{margin-bottom:12px;display:flex;gap:8px;align-items:center}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.muted{color:var(--ink2)}
+.small{font-size:13px}
+.art{font:500 11.5px/1.3 var(--mono);color:var(--ink2);background:var(--surface2);padding:1px 6px;border-radius:4px;white-space:nowrap}
+a.src{font-size:11.5px;line-height:1.3;color:var(--ink2);border:1px solid var(--line);padding:1px 6px;border-radius:4px;text-decoration:none;white-space:nowrap}
+a.src:hover{color:var(--ink);border-color:var(--ink2)}
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;background:color-mix(in srgb,var(--g,var(--ink2)) 16%,var(--surface));white-space:nowrap}
+.tag .dot,.dot{width:8px;height:8px;border-radius:50%;background:var(--g,var(--ink2));display:inline-block;flex:none}
+
+/* Resumen */
+.formula{display:grid;grid-template-columns:1fr 34px 1fr 42px 1.15fr;gap:10px;align-items:stretch}
+.fbox{border-radius:var(--r);padding:16px;background:color-mix(in srgb,var(--g) 11%,var(--surface));border-top:4px solid var(--g);display:flex;flex-direction:column;gap:6px}
+.fbox .ic{width:30px;height:30px}
+.fbox b{font-family:var(--display);font-size:18px}
+.fop{display:grid;place-items:center;font:700 26px var(--display);color:var(--ink2)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:3px}
+.tile .ic{color:var(--ink2)}
+.tile b{font:700 27px/1.1 var(--display);font-variant-numeric:tabular-nums}
+.tile span{font-size:13px;color:var(--ink2)}
+.finds{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:12px}
+.find{display:flex;flex-direction:column;gap:7px;padding:14px;border-radius:var(--r);background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--bad);text-decoration:none}
+.find.warn{border-left-color:var(--warn)}
+.find:hover{border-color:var(--ink2);border-left-color:var(--bad)}
+.find.warn:hover{border-left-color:var(--warn)}
+.find b{font-size:15px;line-height:1.3}
+.find small{color:var(--ink2);font-size:13px}
+.find i{font-style:normal;font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:5px;margin-top:auto}
+.chap{display:flex;flex-wrap:wrap;gap:6px}
+.chap button{border:1px solid var(--line);background:var(--surface);padding:7px 11px;border-radius:8px;display:flex;gap:7px;align-items:center;font-weight:500}
+.chap button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.chapd{margin-top:12px;padding:12px 14px;background:var(--surface2);border-radius:8px;display:flex;gap:10px;flex-direction:column;min-height:92px}
+.tl{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:10px;padding-top:14px}
+.tl:before{content:"";position:absolute;left:0;right:0;top:19px;height:2px;background:var(--line)}
+.tlp{position:relative;padding-top:18px;display:flex;flex-direction:column;gap:3px}
+.tlp:before{content:"";position:absolute;top:0;left:0;width:12px;height:12px;border-radius:50%;background:var(--ink);box-shadow:0 0 0 3px var(--surface)}
+.tlp.pend:before{background:var(--warn)}
+.tlp b{font-size:13.5px}
+.tlp span{font-size:12.5px;color:var(--ink2)}
+
+.art{border:0;cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px}
+.art:hover{background:var(--ink);color:var(--surface)}
+.tile>.art,.tile>span>.art{align-self:flex-start}
+.demo{font:500 11.5px var(--mono);background:var(--surface2);padding:1px 6px;border-radius:4px;white-space:nowrap}
+.howto{display:flex;gap:9px;align-items:flex-start;padding:10px 13px;border-radius:8px;border:1px dashed var(--ink2);font-size:13.5px}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 22px}
+.rules{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.rules .tile b{font-size:24px}
+.rules .tile small{font-size:12.5px;color:var(--ink2)}
+.rules .tile{gap:4px}
+.rules .tile>span:last-child{margin-top:auto;padding-top:4px}
+.asks{border-top:4px solid var(--g);padding:14px}
+.plat{display:grid;grid-template-columns:minmax(0,1fr) 200px;gap:18px}
+.platd{display:flex;flex-direction:column;gap:8px}
+.platn{display:flex;flex-direction:column;gap:8px}
+.platn .tile{padding:9px 12px}
+.platn .tile b{font-size:22px}
+.platd .pills{align-items:center}
+.small-op{font-size:18px}
+.flow{display:flex;flex-wrap:wrap;gap:6px}
+.flow span{display:flex;align-items:center;gap:6px;font-size:13px;padding:5px 9px;background:var(--surface2);border-radius:7px}
+.flow em{font:600 11px var(--mono);font-style:normal;color:var(--ink2)}
+a.go{font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:5px;margin-top:auto;text-decoration:none}
+a.go:hover{text-decoration:underline}
+.origin{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px}
+.origin span{display:flex;gap:6px;align-items:center}
+.plain{font-size:15px;font-weight:500}
+.lab .ic{width:1.1em;height:1.1em;vertical-align:-.2em}
+.note.ev{background:color-mix(in srgb,var(--s-b) 12%,var(--surface))}
+.glos{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.glos>div{display:flex;flex-direction:column;gap:3px;font-size:13.3px}
+.glos b{font-size:14px}
+.glos .ic{color:var(--ink2)}
+.sblock{display:flex;flex-direction:column;gap:5px}
+.sblock .lab{margin:7px 0 0}
+.sblock .lab:first-child{margin-top:0}
+.sttl{font-size:21px;margin:0}
+.sblock .chips{margin-top:7px}
+.sblock .note{margin-top:9px}
+.how{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:7px;font-size:14.5px}
+.prisma{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap}
+.prisma>.ic{align-self:center;color:var(--ink2)}
+.prisma>div{flex:1 1 150px;background:var(--surface2);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.prisma b{font:700 25px var(--display)}
+.prisma span{font-size:12.8px;color:var(--ink2)}
+.prisma .hi{background:color-mix(in srgb,var(--s-b) 16%,var(--surface))}
+.bar.wide{grid-template-columns:150px 1fr 26px}
+.bar.wide2{grid-template-columns:185px 1fr 26px}
+.xb{display:grid;grid-template-columns:90px 22px;gap:6px;align-items:center}
+.xb i{display:block;height:11px;background:var(--s-a);border-radius:0 3px 3px 0;min-width:1px;max-width:90px}
+.xb.e i{background:var(--s-b)}
+.xt .status{font-size:12px;padding:1px 8px;white-space:nowrap}
+.tops{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;font-size:13.3px}
+.tops li{display:grid;grid-template-columns:32px 1fr;gap:6px}
+.tops b{font:700 17px var(--display)}
+dialog#artd{border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);padding:18px;width:min(640px,calc(100vw - 32px));max-height:80vh}
+dialog#artd::backdrop{background:rgba(10,15,22,.55)}
+.dh{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:12px}
+.dh>div{display:flex;flex-direction:column}
+#artb{display:flex;flex-direction:column;gap:7px}
+#artb blockquote{margin:0;padding:9px 12px;background:var(--surface2);border-radius:7px;font-size:14px}
+
+/* Actores */
+.actors{display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:18px;align-items:start}
+.net{position:relative;display:flex;flex-direction:column;gap:10px}
+.net svg.links{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:visible}
+.lane{background:color-mix(in srgb,var(--g) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--g) 32%,var(--line));border-radius:var(--r);padding:9px}
+.lane h3{font-size:12.5px;font-family:var(--body);font-weight:600;display:flex;align-items:center;gap:6px;margin-bottom:7px}
+.nodes{display:flex;flex-wrap:wrap;gap:7px}
+.mid{display:grid;grid-template-columns:1.25fr .72fr 1fr;gap:10px}
+.mid .nodes{flex-direction:column}
+.node{position:relative;z-index:3;max-width:100%;display:flex;align-items:center;gap:8px;text-align:left;padding:8px 10px;background:var(--surface);border:1px solid var(--line);border-radius:8px;font-weight:500;font-size:13.5px;line-height:1.2;transition:opacity .15s}
+.node .ic{color:var(--g)}
+.node:hover{border-color:var(--ink2)}
+.node[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.node[aria-pressed="true"] .ic{color:var(--surface)}
+.node.dim{opacity:.5}
+.node .relnum{margin-left:auto}
+.node.rel{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.panel{position:sticky;top:112px;display:flex;flex-direction:column;gap:12px;max-height:calc(100vh - 128px);overflow:auto}
+.ph{display:flex;gap:11px;align-items:center}
+.ph .bigic{width:44px;height:44px;display:grid;place-items:center;border-radius:10px;background:color-mix(in srgb,var(--g) 20%,var(--surface))}
+.ph h3{font-size:19px;margin:0}
+.lab{font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink2);font-weight:600;margin-bottom:4px}
+.do{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.do li{display:flex;gap:7px;align-items:baseline;flex-wrap:wrap;font-size:14px}
+.do li .ic{color:var(--ink2);align-self:center}
+.relnum{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--ink);color:var(--surface);font-size:11.5px;font-weight:600;flex:none}
+.note{padding:10px 12px;border-radius:8px;background:var(--surface2);font-size:13.5px;display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap}
+.legendline{display:flex;gap:12px;flex-wrap:wrap;font-size:12.5px;color:var(--ink2)}
+.legendline span{display:flex;align-items:center;gap:5px}
+
+/* Procesos */
+.phases{display:grid;grid-template-columns:3fr 4fr 2fr;gap:10px}
+.phase{display:flex;flex-direction:column;gap:6px;min-width:0}
+.phase h3{font-size:12.5px;font-family:var(--body);font-weight:600;color:var(--ink2);padding-bottom:4px;border-bottom:2px solid var(--line)}
+.steps{display:flex;gap:6px}
+.step{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:9px;font-size:12px;line-height:1.2;font-weight:500}
+.step .ic{width:22px;height:22px}
+.step em{font:600 11px var(--mono);color:var(--ink2)}
+.step[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.step[aria-pressed="true"] em{color:var(--surface)}
+.stepd{display:grid;grid-template-columns:1.15fr 1fr 1fr;gap:22px}
+.chips{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+th{font-size:12.5px;color:var(--ink2);font-weight:600}
+tbody tr.on{background:var(--surface2)}
+tbody tr[data-step]{cursor:pointer}
+.mk{display:inline-grid;place-items:center;min-width:23px;height:23px;padding:0 4px;margin:1px;border-radius:6px;font:600 11.5px var(--mono);background:color-mix(in srgb,var(--g) 22%,var(--surface))}
+.ctrl{display:flex;flex-wrap:wrap;gap:12px;align-items:end}
+.ctrl label{display:flex;flex-direction:column;gap:3px;font-size:12.5px;color:var(--ink2);font-weight:500}
+.ctrl select{padding:7px 9px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);font-size:14px;max-width:290px}
+.ctrl input[type=range]{width:170px;accent-color:var(--ink)}
+.ctrl input[type=text]{padding:7px 9px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);font-size:14px;width:230px}
+.check{flex-direction:row!important;align-items:center;gap:7px!important;color:var(--ink)!important;font-size:14px!important;padding-bottom:7px}
+.week{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.wrow{display:grid;grid-template-columns:62px repeat(5,1fr) 66px;gap:3px;align-items:center;font-size:12.5px}
+.wrow>b{font-weight:600}
+.day{height:34px;border-radius:5px;display:grid;place-items:center;background:color-mix(in srgb,var(--g-esc) 18%,var(--surface));color:var(--ink);font-size:11px}
+.day.e{background:var(--g-emp);color:#16110d;font-weight:600}
+.dayb{display:flex;height:30px;border-radius:6px;overflow:hidden;gap:2px;margin-top:6px}
+.dayb div{display:grid;place-items:center;font-size:12px;font-weight:600;color:#16110d}
+.status{display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:13.5px;padding:3px 10px;border-radius:999px;border:1.5px solid currentColor}
+.status.ok{color:var(--ok)}.status.warn{color:var(--warn)}.status.bad{color:var(--bad)}.status.na{color:var(--ink2)}
+svg.chart{display:block;width:100%;height:auto;color:var(--ink)}
+svg.chart text{fill:currentColor;font-family:var(--body)}
+.fig{margin:0}
+.fig figcaption{font-size:13px;color:var(--ink2);margin-top:8px}
+
+/* Subsistemas */
+.lens{display:flex;flex-wrap:wrap;gap:6px}
+.lens button,.filter button{border:1px solid var(--line);background:var(--surface);padding:7px 12px;border-radius:8px;font-weight:500;font-size:14px;display:flex;align-items:center;gap:6px}
+.lens button[aria-pressed="true"],.filter button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.y{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:500}
+.y.yes{color:var(--ok)}.y.part{color:var(--warn)}.y.no{color:var(--ink2)}
+th.hl,td.hl{background:color-mix(in srgb,var(--g-sub) 13%,transparent)}
+.ways{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.way{border-radius:var(--r);padding:14px;background:var(--surface2);display:flex;flex-direction:column;gap:9px}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:5px 9px;font-size:13.5px;font-weight:600}
+.pill small{display:block;font-weight:400;color:var(--ink2);font-size:11.5px}
+
+/* Evidencia */
+.filter{display:flex;flex-wrap:wrap;gap:6px}
+.tens{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
+.ten{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:9px}
+.ten header{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.ten h3{display:flex;gap:7px;align-items:center;font-size:15.5px}
+.nvp{display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:1}
+.nvp>div{padding:9px 10px;border-radius:7px;background:var(--surface2);font-size:13.3px;display:flex;flex-direction:column;gap:5px}
+.nvp>div:last-child{background:color-mix(in srgb,var(--g-emp) 10%,var(--surface))}
+.prio{font-size:11.5px;font-weight:600;display:inline-flex;gap:4px;align-items:center;white-space:nowrap}
+.prio.a{color:var(--bad)}.prio.m{color:var(--warn)}
+.dotc{display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--ink)}
+.bars{display:flex;flex-direction:column;gap:7px}
+.bar{display:grid;grid-template-columns:90px 1fr 22px;gap:8px;align-items:center;font-size:13px}
+.bar i{display:block;height:12px;border-radius:0 4px 4px 0;background:var(--s-b);min-width:2px}
+.bar.z i{background:var(--bad);min-width:3px}
+details summary{cursor:pointer;font-size:13px;color:var(--ink2);margin-top:8px}
+
+/* Autodiagnóstico */
+.auto{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:18px;align-items:start}
+.item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border:0}
+.item .t{font-size:14px;display:flex;gap:6px;flex-wrap:wrap;align-items:baseline}
+.crit{color:var(--bad);font-size:11.5px;font-weight:600;display:inline-flex;gap:3px;align-items:center}
+.seg{display:flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.seg button{border:0;background:var(--surface);padding:5px 8px;font-size:12px;font-weight:500;border-right:1px solid var(--line);display:flex;gap:3px;align-items:center}
+.seg button:last-child{border:0}
+.seg button[aria-pressed="true"][data-v="c"]{background:var(--ok);color:var(--surface)}
+.seg button[aria-pressed="true"][data-v="p"]{background:var(--warn);color:var(--surface)}
+.seg button[aria-pressed="true"][data-v="n"]{background:var(--bad);color:var(--surface)}
+.seg button[aria-pressed="true"][data-v="x"]{background:var(--ink2);color:var(--surface)}
+.dimh{font:600 14px var(--body);display:flex;gap:7px;align-items:center;margin:14px 0 2px}
+.dimh:first-child{margin-top:0}
+.score{display:flex;align-items:center;gap:14px}
+.score b{font:700 50px/1 var(--display);font-variant-numeric:tabular-nums}
+.dimbar{display:grid;grid-template-columns:96px 1fr 38px;gap:8px;align-items:center;font-size:13px;margin-top:6px}
+.dimbar .tr{height:12px;border-radius:4px;background:var(--surface2);overflow:hidden}
+.dimbar .tr i{display:block;height:100%;border-radius:0 4px 4px 0}
+.btnrow{display:flex;flex-wrap:wrap;gap:7px}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 11px;font-size:13.5px;font-weight:500;display:flex;gap:6px;align-items:center}
+.btn:hover{border-color:var(--ink2)}
+.banner{display:flex;gap:8px;align-items:center;padding:8px 12px;border-radius:8px;background:color-mix(in srgb,var(--warn) 15%,var(--surface));font-size:13.5px;font-weight:500}
+.blk{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:13.5px}
+.blk li{display:flex;gap:6px;align-items:flex-start}
+.blk .ic{color:var(--bad)}
+
+/* Fuentes */
+.ref{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);align-items:start}
+.ref:last-child{border:0}
+.ref p{font-size:14px}
+.ref small{color:var(--ink2);font-size:12.5px;display:block;margin-top:2px}
+footer{max-width:1240px;margin:0 auto;padding:0 20px 32px;color:var(--ink2);font-size:12.5px}
+#tip{position:fixed;z-index:50;pointer-events:none;background:var(--ink);color:var(--surface);padding:6px 9px;border-radius:6px;font-size:12.5px;max-width:260px;display:none}
+
+.rt{display:flex;gap:7px;align-items:flex-start;font:600 14px/1.25 var(--body);color:var(--ink);min-height:36px}
+.rcit{margin-top:auto;padding-top:5px;display:flex;flex-wrap:wrap;gap:4px 8px}
+.ob{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:7px;font-size:13.5px}
+.ob li{padding-left:12px;border-left:2px solid var(--line);line-height:1.4}
+.aud{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:12px;margin-top:10px}
+.audc{background:var(--surface2);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.audc .lab{margin:0}
+.sig{margin:0;display:flex;flex-direction:column;gap:5px}
+.sig div{display:grid;grid-template-columns:82px minmax(0,1fr);gap:8px;font-size:13px;line-height:1.3}
+.sig dt{font-weight:600}.sig dd{margin:0;color:var(--ink2)}
+.sig.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 22px;margin-top:10px}
+.more{margin-top:12px}
+.more summary{cursor:pointer;font-weight:600;font-size:14px;display:flex;gap:7px;align-items:center}
+.chapw{display:grid;grid-template-columns:290px minmax(0,1fr);gap:14px}
+.chapw .chap{flex-direction:column;flex-wrap:nowrap}
+.chapw .chap button{text-align:left;align-items:flex-start;width:100%}
+.chapw .chap span{display:flex;flex-direction:column}
+.chapw .chap small{font-weight:400;font-size:12.5px;opacity:.8}
+.chapw .chapd{margin-top:0;gap:7px}
+.chapd p{font-size:14.5px}.chapd .lab{margin-top:6px}
+.chapd .ob li{border-left-color:var(--ink2)}
+.pdia{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.psys{display:flex;gap:12px;align-items:center;padding:12px 16px;border-radius:var(--r);background:var(--surface2);border:1px solid var(--line)}
+.psys>.ic{width:28px;height:28px}
+.psys div{display:flex;flex-direction:column;gap:2px}.psys b{font-family:var(--display);font-size:17px}
+.ptwo{display:grid;grid-template-columns:minmax(0,1fr) 150px minmax(0,1fr);gap:10px;align-items:stretch}
+.ptwo .fbox .lab{margin:0}
+.ptwo .fbox .small b{font:inherit;font-weight:600}
+.ptwo .fbox .ob li{border-left-color:var(--g)}
+.pbr{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:5px;padding:6px}
+.pbr>.ic{width:28px;height:28px}
+.who{display:flex;flex-direction:column;gap:8px}
+.whor{display:grid;grid-template-columns:230px minmax(0,1fr) minmax(0,1fr);gap:14px;padding:11px 13px;border-radius:8px;background:var(--surface2);border-left:4px solid var(--g)}
+.whon{display:flex;flex-direction:column;gap:3px;align-items:flex-start}
+.lanes{display:flex;flex-direction:column;gap:8px}
+.rlane{display:grid;grid-template-columns:170px minmax(0,1fr);gap:12px;padding:10px 12px;border-radius:8px;background:color-mix(in srgb,var(--g) 9%,var(--surface));border-left:4px solid var(--g)}
+.rhead{display:flex;flex-direction:column;gap:2px}
+.rsteps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.rsteps li{display:flex;flex-direction:column;gap:2px;background:var(--surface);border-radius:7px;padding:8px 10px}
+.rsteps li b{font-size:13.5px;line-height:1.25}
+.rsteps em{font:600 11.5px var(--mono);font-style:normal;color:var(--ink2)}
+.guide{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:10px 0 14px;padding:12px 14px;background:var(--surface2);border-radius:8px}
+.guide.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.guide .how{font-size:13.5px;margin:0;padding-left:18px}
+.tgrid{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:22px;align-items:start}
+.ctrl.v{flex-direction:column;align-items:stretch}
+.ctrl.v label{min-width:0}
+.ctrl.v select{max-width:100%;min-width:0;width:100%}.ctrl.v input[type=range]{width:100%}
+.res{font-size:15px;margin-bottom:4px}
+.ans{display:grid;grid-template-columns:96px minmax(0,1fr);gap:14px;align-items:center;margin-top:12px;padding:12px 14px;background:color-mix(in srgb,var(--g-sub) 11%,var(--surface));border-radius:8px}
+.ansn{display:flex;flex-direction:column}.ansn b{font:700 32px/1 var(--display)}.ansn span{font-size:12.5px;color:var(--ink2)}
+#sbt tr.off td:first-child{opacity:.62}
+@media (max-width:980px){
+  .aud,.tgrid,.guide,.guide.two,.chapw,.whor{grid-template-columns:minmax(0,1fr)}
+  .chapw .chap{flex-direction:row;flex-wrap:wrap}
+  .chapw .chap button{width:auto}
+  .chapw .chap small{display:none}
+  .sig.cols{grid-template-columns:1fr}
+  .actors,.auto{grid-template-columns:1fr}
+  .panel{position:static;max-height:none}
+  .stepd,.grid3,.grid4,.rules,.glos,.facts{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .plat{grid-template-columns:1fr}
+  .phases{grid-template-columns:1fr}
+  .tl{grid-template-columns:repeat(2,1fr);gap:16px}
+  .tl:before{display:none}
+}
+@media (max-width:720px){
+  .ptwo,.rlane,.ans,.tens,.grid2{grid-template-columns:minmax(0,1fr)}
+  .fig,details{max-width:100%;overflow-x:auto}
+  .card{min-width:0}
+  .pbr>.ic{transform:rotate(90deg)}
+  .formula{grid-template-columns:1fr}
+  .fop{height:24px}
+  .grid3,.grid4,.stepd,.ways,.nvp,.mid,.facts{grid-template-columns:minmax(0,1fr)}
+  .steps{overflow-x:auto;padding-bottom:4px}
+  .step{min-width:86px}
+  .item{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<!--SPRITE-->
+<header class="top">
+  <div class="dualbar"></div>
+  <div class="top-in">
+    <div class="brand"><h1>Educación Dual EMS: mapa y diagnóstico</h1><span>Acuerdo 28/11/25 · fecha de análisis: 1 nov 2026</span></div>
+    <nav class="tabs" id="tabs" aria-label="Secciones"></nav>
+  </div>
+</header>
+<main>
+  <section class="view" id="resumen"></section>
+  <section class="view" id="actores" hidden></section>
+  <section class="view" id="procesos" hidden></section>
+  <section class="view" id="subsistemas" hidden></section>
+  <section class="view" id="evidencia" hidden></section>
+  <section class="view" id="autodiagnostico" hidden aria-hidden="true"></section>
+  <section class="view" id="fuentes" hidden></section>
+</main>
+<footer>Análisis interno del equipo consultor. No es un documento oficial de la SEP. Fecha de análisis: 1 de noviembre de 2026.</footer>
+<dialog id="artd" aria-label="Texto del Acuerdo"><div class="dh"><div><b>Texto oficial</b><span class="small muted">Anexo del Acuerdo 28/11/25, DOF 18 nov 2025</span></div><button type="button" class="btn" id="artx">Cerrar</button></div><div id="artb"></div></dialog>
+<div id="tip" role="tooltip"></div>
+<script>
+'use strict';
+const ic=(n,c='')=>`<svg class="ic ${c}" aria-hidden="true"><use href="#ic-${n}"/></svg>`;
+const ART=/*ARTJSON*/null, BIB=/*BIBJSON*/null;
+const artLabel=t=>t.replace(/^(\d+) ([IVXL])/,'$1, fracc. $2');
+const art=t=>`<button type="button" class="art" data-art="${t}" data-tip="Clic para leer el texto oficial">Art. ${artLabel(t)}</button>`;
+const RN={I:1,V:5,X:10,L:50};
+const romanN=s=>[...s].reduce((n,c,i,a)=>n+(RN[c]<(RN[a[i+1]]||0)?-RN[c]:RN[c]),0);
+function artRefs(t){const out=[];let cur=null;t.split(/,\s*/).forEach(tok=>{let m=tok.match(/^(\d+) (a|y) (\d+)$/);
+ if(m){for(let i=+m[1];i<=+m[3];i++)out.push({a:String(i)});return}
+ m=tok.match(/^(\d+)?\s*([IVXL]+)?(?:-([IVXL]+))?$/);if(!m)return;if(m[1])cur=m[1];
+ if(m[2]&&m[3]){const o=ART[cur].o;o.slice(o.indexOf(m[2]),o.indexOf(m[3])+1).forEach(f=>out.push({a:cur,f}))}else out.push({a:cur,f:m[2]})});return out}
+function openArt(t){const d=document.getElementById('artd'),r=artRefs(t);
+ d.querySelector('#artb').innerHTML=r.map(x=>{const A=ART[x.a];if(!A)return '';
+  const body=x.f?`<blockquote>${A.f[x.f]||''}</blockquote>`:`<blockquote>${A.t}</blockquote>${A.o.map(k=>`<blockquote><b>${k}.</b> ${A.f[k]}</blockquote>`).join('')}`;
+  return `<h3>Artículo ${x.a}${x.f?`, fracción ${x.f}`:''}</h3>${x.f?`<p class="small muted">La fracción es un inciso del artículo, numerado en romanos. ${x.f} equivale a ${romanN(x.f)}.</p>`:''}${body}`}).join('');
+ d.showModal();}
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const store={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+/* ---------- Fuentes ---------- */
+const S={
+ A:{l:'Acuerdo 28/11/25',t:'Norma',st:'Texto completo',i:'stamp',r:'SEP (2025). Acuerdo número 28/11/25 por el que se emiten los Lineamientos Generales para la impartición del tipo medio superior mediante la opción de educación dual. DOF, 18 de noviembre de 2025.',u:'https://sidof.segob.gob.mx/notas/5773151'},
+ D25:{l:'Díaz y Ramírez 2025',t:'Artículo revisado por pares',st:'Texto completo',i:'book-open-check',r:'Díaz Guevara, J. C. y Ramírez García, R. G. (2025). Aprendiendo a trabajar en la educación dual del Conalep en Jalisco, México. Revista Latinoamericana de Estudios Educativos, 55(3), 43-68.',u:'https://www.scielo.org.mx/pdf/rlee/v55n3/2448-878X-rlee-55-03-43.pdf',n:'Caso cualitativo, un plantel.'},
+ D26:{l:'Díaz 2026',t:'Artículo revisado por pares',st:'Casi completo, sin conclusiones',i:'book-open-check',r:'Díaz Guevara, J. C. (2026). "Prefiero que mi hijo esté metido aprendiendo a que ande de vago". Perspectivas de familias sobre el modelo dual en un bachillerato técnico mexicano. Revista del Instituto de Investigaciones en Educación, 16(24).',u:'https://doi.org/10.30972/riie.16248911',n:'Cuatro entrevistas a familias. No generaliza.'},
+ HM24:{l:'Hernández y Marsán 2024',t:'Artículo revisado por pares',st:'Resultados completos',i:'book-open-check',r:'Hernández Fernández, J. y Marsán, E. (2024). Satisfacción y percepción de mejoras de las y los graduados del Modelo Mexicano de Formación Dual. Revista Mexicana de Investigación Educativa, 29(101), 333-364.',u:'https://scielo.org.mx/pdf/rmie/v29n101/1405-6666-rmie-29-101-333.pdf',n:'Encuesta a graduados Conalep. Estado de México y Coahuila, 2020.'},
+ ZT20:{l:'Zamora-Torres y Thalheim 2020',t:'Artículo revisado por pares',st:'Resultados',i:'book-open-check',r:'Zamora-Torres, A.-I. y Thalheim, L. (2020). El Modelo Mexicano de Formación Dual como modelo educativo en pro de la inserción laboral de los jóvenes en México. Revista Iberoamericana de Educación Superior, 11(31), 48-67.',u:'https://doi.org/10.22201/iisue.20072872e.2020.31.705',n:'Correlación 2013-2016. No prueba causalidad.'},
+ ES24:{l:'Espinal 2024',t:'Artículo revisado por pares',st:'Solo resumen',i:'book-open-check',r:'Espinal Betanzo, J. A. (2024). Formación dual a nivel técnico: efectos en la transición escuela-trabajo. Estudios Sociológicos, El Colegio de México.',u:'https://estudiossociologicos.colmex.mx/index.php/es/article/view/2636',n:'Guanajuato. Conviene leer el texto completo.'},
+ AP24:{l:'Apodaca et al. 2024',t:'Artículo, calidad editorial limitada',st:'Texto completo',i:'triangle-alert',r:'Apodaca López, C. A., Ochoa Barraza, P., Chávez Moreno, R. T. y Parra Gutiérrez, N. (2024). Modelo de Formación Dual en el CONALEP como opción de inducción al campo laboral. Ciencia Latina Revista Científica Multidisciplinar, 8(5), 1387-1402.',u:'https://doi.org/10.37811/cl_rcm.v8i5.13586',n:'Trae citas rotas y sin cifras de muestra. Usar solo como señal cualitativa.'},
+ HM26:{l:'Hernández y Marsán 2026',t:'Artículo revisado por pares',st:'Solo resumen',i:'book-open-check',r:'Hernández-Fernández, J. y Marsán, E. (2026). Dual Apprenticeships in Mexico: Insights Into the First Employment. International Journal for Research in Vocational Education and Training, 13(1).',u:'https://doi.org/10.13152/ijrvet.13.1.1',n:'307 graduados. Modelo probit.'},
+ HR26:{l:'Hernández et al. 2026',t:'Artículo revisado por pares',st:'Solo resumen',i:'book-open-check',r:'Hernández-Fernández, J., Razo, A. y Zúñiga-Herrera, M. (2026). Navigating Gender in Dual Education. International Journal of Training and Development.',u:'https://doi.org/10.1111/ijtd.70027',n:'60 aprendices.'},
+ HC25:{l:'Hernández et al. 2025',t:'Capítulo de libro',st:'Solo resumen',i:'book-open-check',r:'Hernández-Fernández, J., Cervantes-Gómez, J. A., Marsán, E. y Aramburu Cano, V. (2025). Reasons to join the dual apprenticeship programme in Mexico. Routledge.',u:'https://doi.org/10.4324/9781003589303-8'},
+ HF22:{l:'Hernández et al. 2022',t:'Artículo revisado por pares',st:'Solo resumen',i:'book-open-check',r:'Hernández-Fernández, J., Fontdevila, C. y Marsán, E. (2022). Post-dual training transitions in Mexico: apprentices’ strategies during the Covid-19 lockdown. Profesorado.',u:'https://doi.org/10.30827/profesorado.v26i3.23542',n:'52 aprendices.'},
+ AR24:{l:'Aramburu et al. 2024',t:'Artículo revisado por pares',st:'Solo resumen',i:'book-open-check',r:'Aramburu Cano, V., Fuentes Castro, H. J. y Cervantes-Gómez, J. A. (2024). Third time is the charm? Adoption and recontextualisation of the German dual model in Mexico. Cogent Education.',u:'https://doi.org/10.1080/2331186x.2024.2432104',n:'40 entrevistas.'},
+ ES25:{l:'Espinal 2025',t:'Artículo revisado por pares',st:'Solo resumen',i:'book-open-check',r:'Espinal Betanzo, J. A. (2025). Formación dual en México: factores críticos en su funcionamiento. Papeles.',u:'https://doi.org/10.54104/papeles.v17n34.2195'},
+ ES26:{l:'Espinal 2026',t:'Artículo revisado por pares',st:'Solo resumen',i:'book-open-check',r:'Espinal Betanzo, J. A. (2026). Estereotipos de género en la formación dual. Revista Interdisciplinaria de Estudios de Género de El Colegio de México.',u:'https://doi.org/10.24201/reg.v12i1.1333'},
+ GG23:{l:'García y Gutiérrez 2023',t:'Artículo revisado por pares',st:'Solo resumen',i:'book-open-check',r:'García Fuentes, P. y Gutiérrez Huerter O, G. (2023). El Modelo Mexicano de Formación Dual y la Educación Media Superior en el Estado de Hidalgo, México. Revista Latinoamericana de Estudios Educativos, 53(1), 339-368.',u:'https://doi.org/10.48102/rlee.2023.53.1.537',n:'CBTIS, DGETI.'},
+ CA25:{l:'Calderón et al. 2025',t:'Artículo',st:'Solo resumen',i:'book-open-check',r:'Calderón-Juárez, Y. V., Cruz-Cruz, Y. y Terán-Treviño, S. A. (2025). Del aula a la industria: la educación dual, un nuevo reto educativo en el bachillerato tecnológico de México. Revista Mexicana de Investigación e Intervención Educativa.',u:'https://doi.org/10.62697/rmiie.v4i3.232',n:'CETIS 71, DGETI.'},
+ RC26:{l:'Rodríguez-Cuellar et al. 2026',t:'Artículo',st:'Solo resumen',i:'book-open-check',r:'Rodríguez-Cuellar, J. A., Reyes-Matamoros, J., Ibarra-Cantún, D. y Marín-Castro, M. A. (2026). La Educación Dual y las Brigadas de Educación para el desarrollo rural como estrategias de innovación educativa en Puebla. Dilemas Contemporáneos.',u:'https://doi.org/10.46377/dilemas.v14i1.5002',n:'CBTA 305, DGETAyCM.'},
+ JE26:{l:'Juárez-Edgar 2026',t:'Artículo',st:'Solo resumen',i:'book-open-check',r:'Juárez-Edgar, F. (2026). Educación dual en el nivel medio superior: contradicciones y retos ante la globalización. Revista Eduscientia.',u:'https://openalex.org/W7215258010'},
+ PV25:{l:'Pilz y Vogelsang 2025',t:'Artículo revisado por pares',st:'Solo resumen',i:'book-open-check',r:'Pilz, M. y Vogelsang, B. (2025). Co-Operation Between Actors in Dual Training Programmes: Conditions for Success in the Mexican Tourism Sector. International Journal for Research in Vocational Education and Training, 12(3).',u:'https://doi.org/10.13152/ijrvet.12.3.4',n:'70 entrevistas.'},
+ OA:{l:'OpenAlex',t:'Base bibliográfica abierta',st:'Fecha de análisis: 1 nov 2026',i:'database',r:'OpenAlex. Consulta por título y resumen con 10 búsquedas sobre formación dual, educación dual, modelo dual y dual training en México, 2013 a 2026.',u:'https://openalex.org/'},
+ MM21:{l:'Moreno-Murrieta et al. 2021',t:'Artículo, nivel superior',st:'Texto completo',i:'book-open-check',r:'Moreno-Murrieta, R. E., Mendivil-Yescas, M. J. y Solorzano Barba, L. P. (2021). Evaluación de la primera implementación del plan de rotación de puestos de aprendizaje en la Universidad Tecnológica de Puerto Peñasco desde la perspectiva del formador-empresario. Ciencia Latina, 5(6), 12260-12267.',u:'https://doi.org/10.37811/cl_rcm.v5i6.1228',n:'Cuatro formadores. Es educación superior, no EMS.'},
+ C18:{l:'Covarrubias 2018',t:'Tesis de maestría',st:'Recomendaciones y limitaciones',i:'graduation-cap',r:'Covarrubias Astorga, L. G. (2018). El modelo de formación dual de Baja California: ¿una nueva forma de articulación entre educación y empleo? El Colegio de la Frontera Norte.',u:'https://posgrado.colef.mx/wp-content/uploads/2018/10/TESIS-Covarrubias-Astorga-Lilia-Guadalupe.pdf',n:'Tijuana y Mexicali.'},
+ DR:{l:'DualReg, Colonia',t:'Informe de investigación',st:'Texto completo',i:'library',r:'Fuchs, M., Pilz, M., Röhrer, N. y Vogelsang, B. (s. f.). Proyecto DualReg: arraigado localmente, interconectado globalmente. México. Universidad de Colonia.',u:'https://wigeo.uni-koeln.de/sites/wigeo/user_upload/DualReg_Informe_-_Universidad_de_Colonia__PDF__1.1_MB_.pdf',n:'110 entrevistas a expertos, 2019-2022.'},
+ D23:{l:'Díaz, COMIE',t:'Ponencia',st:'Texto completo',i:'presentation',r:'Díaz Guevara, J. C. Modelo Mexicano de Formación Dual de Conalep en Jalisco. Memoria electrónica del Congreso Nacional de Investigación Educativa, COMIE, v. 17.',u:'https://comie.org.mx/congreso/memoriaelectronica/v17/doc/1736.pdf',n:'Avance de investigación, 15 %.'},
+ SG22:{l:'SEMS-GIZ 2022',t:'Documento oficial, marco anterior',st:'Secciones de diagnóstico y actores',i:'stamp',r:'SEP-SEMS (2022). Metodología y Criterios para la Planificación de la Educación Dual en Media Superior. Incluye la encuesta de Monitoreo y Evaluación 2021-2022.',u:'https://dgetaycm.sep.gob.mx/storage/recursos/2022/11/djLU9S86w7-1%20Metodolog%C3%ADa%20y%20Criterios%20planificaci%C3%B3n%20ED%20MS%202022.pdf',n:'Autorreporte. Previa al Acuerdo 28/11/25.'},
+ MAN:{l:'Manuales del portal',t:'Documento oficial',st:'Texto completo, 3 manuales',i:'file-text',r:'SEMS. Manuales del sistema: empresa, escuela y subsistema. Plataforma de registro de empresas.',u:'https://empresas.educaciondual.sems.gob.mx/Manual_del_sistema_registro_empresa.pdf'},
+ PT:{l:'Portal SEMS',t:'Sitio oficial',st:'Páginas públicas',i:'monitor',r:'SEMS. Registro Empresas Dual. Fecha de análisis: 1 de noviembre de 2026.',u:'https://empresas.educaciondual.sems.gob.mx/',n:'Las listas de empresas, escuelas y subsistemas piden inicio de sesión.'},
+ BE:{l:'Convocatoria de beca 2023',t:'Documento oficial, marco anterior',st:'Texto completo',i:'stamp',r:'SEP-SEMS (2023). Convocatoria 2023. Beca de Estímulo para Educación Dual. Programa de Becas Elisa Acuña.',u:'https://dgetaycm.sep.gob.mx/storage/recursos/2023/02/KpbulUJxm8-Anexo%202%20Conv.%20ED.pdf',n:'Previa al Acuerdo 28/11/25. Se cita porque exige estar activo en la Plataforma Académica.'},
+ BB:{l:'CONALEP 2026',t:'Presentación',st:'Texto completo',i:'presentation',r:'Huitrón Miranda, M. E. (2026, 30 de junio). Aplicación del modelo dual en economías con alta informalidad. Acciones en el CONALEP, México. Webinar BIBB.',u:'https://www.bibb.de/dokumente/pdf/202606_Alianza-webinar_CONALEP_Huitr%c3%b3n.pdf'},
+ RZ:{l:'La Razón 2025',t:'Prensa',st:'Fragmento de búsqueda',i:'megaphone',r:'La Razón (19 de febrero de 2025). Mario Delgado convoca a empresas globales a trabajar para alinear el sector educativo con las necesidades de la economía mexicana.',u:'https://www.razon.com.mx/mexico/2025/02/19/mario-delgado-convoca-a-empresas-globales-a-trabajar-para-alinear-el-sector-educativo-con-las-necesidades-de-la-economia-mexicana/',n:'Declaración, no estadística oficial.'}
+};
+const src=k=>`<a class="src" href="#fuentes" data-tip="${S[k].t}. ${S[k].st}.">${S[k].l}</a>`;
+const HOWTO=`<div class="howto">${ic('info')}<div><b>Cómo leer las citas.</b> <span class="demo">Art. 4, fracc. LX</span> significa artículo 4, fracción 60 de los Lineamientos, que son el Anexo del Acuerdo 28/11/25. Haz clic en cualquier cita para leer el texto oficial.</div></div>`;
+
+/* ---------- Grupos ---------- */
+const G={gob:{n:'Gobernanza',i:'landmark'},sub:{n:'Subsistema',i:'network'},esc:{n:'Escuela',i:'school'},est:{n:'Estudiantado',i:'graduation-cap'},emp:{n:'Espacio laboral',i:'factory'},apo:{n:'Apoyo',i:'handshake'}};
+const gv=g=>`--g:var(--g-${g})`;
+const gtag=g=>`<span class="tag" style="${gv(g)}"><span class="dot"></span>${G[g].n}</span>`;
+
+/* ---------- Pestañas ---------- */
+/* Autodiagnóstico oculto: para reactivarlo, agregar su pestaña aquí y descomentar renderAuto() al final. */
+const TABS=[['resumen','Resumen del Acuerdo','file-text'],['actores','Actores','users'],['procesos','Procesos','route'],['subsistemas','Subsistemas','layers'],['evidencia','Evidencia','search'],['fuentes','Fuentes','library']];
+$('#tabs').innerHTML=TABS.map(t=>`<a href="#${t[0]}" data-t="${t[0]}">${ic(t[2])}${t[1]}</a>`).join('');
+function route(){
+  const h=location.hash.slice(1), v=TABS.some(t=>t[0]===h)?h:'resumen';
+  TABS.forEach(t=>{$('#'+t[0]).hidden=t[0]!==v});
+  $$('#tabs a').forEach(a=>a.dataset.t===v?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'));
+  window.scrollTo(0,0);
+  if(v==='actores')requestAnimationFrame(drawLinks);
+}
+addEventListener('hashchange',route);
+
+/* ---------- 1. Resumen ---------- */
+const CHAP=[
+ ['I','Disposiciones generales','file-text','¿De qué trata y a quién obliga?','Es la puerta de entrada. Explica que la educación dual combina escuela y espacio laboral, dice quién debe cumplir los Lineamientos y fija el vocabulario de todo el texto.',[['1','Objeto','Regula la opción dual, que termina en Doble Certificación. La SEMS resuelve las dudas de interpretación.'],['2','Obligados','SEMS, cuatro direcciones generales y las Escuelas.'],['3','Adopción','La SEMS promueve que estados y organismos descentralizados o autónomos adopten la norma por convenio.'],['4','Definiciones','60 términos, de "Actores" a "Tutor académico".']]],
+ ['II','De la Educación Dual','route','¿Cómo funciona?','Describe el modelo: qué se aprende en cada lugar, quién aprueba los planes y cuánto tiempo se pasa en el espacio laboral. Aquí están las reglas de horas, duración y calendario.',[['5','Características','Once rasgos, entre ellos horario nunca nocturno, evaluación compartida y perspectiva de género.'],['6 y 7','Planes de estudio','Los Subsistemas los proponen y la SEMS los aprueba. Salud pide una opinión adicional.'],['8','Tiempo en el espacio laboral','De 1 a 3 años y de 18 a 30 horas por semana, según carrera y madurez de la empresa.'],['9 y 10','Planificación','Escuela y empresa planifican a tres años, con el calendario escolar autorizado.']]],
+ ['III','De los participantes','users','¿Qué debe hacer cada quien?','Es el capítulo de obligaciones. Dedica una sección a cada participante y detalla qué debe hacer para entrar y mantenerse en la opción dual.',[['11','Estudiantes','Requisitos de entrada, firma, elección de empresa, becas y aviso de riesgos.'],['12','Escuelas','Difusión, selección, matrícula, seguimiento y protección.'],['13','Subsistemas','Planes, validación de empresas, firma de convenios, capacitación e informes.'],['14','Espacios de formación laboral','Registro, instructores, 75 % de matriz, seguro ampliado y apoyos.'],['15 a 17','Otros participantes','Certificadoras, organismos empresariales y cooperación internacional.']]],
+ ['IV','Del Comité Directivo','landmark','¿Quién coordina a nivel nacional?','Crea una mesa nacional de apoyo técnico a la SEP. Coordina la estrategia, opina sobre los planes y evalúa la implementación.',[['18','Objeto','Coordinar y articular estrategias y acciones.'],['19','Integrantes','Lo preside la SEMS. Tiene hasta 15 asientos con voz y voto, incluido el sector empresarial.'],['20','Funciones','Opina sobre planes, recomienda y evalúa de manera científica.'],['21','Sesiones','Al menos dos ordinarias al año. Sus integrantes no reciben pago.']]],
+ ['V','De los Convenios de Colaboración','file-pen-line','¿Cómo entra una empresa?','Regula el primer documento formal. Sin este convenio, una empresa, institución u organismo no puede iniciar la opción dual.',[['22','Contenido y vigencia','Bases, compromisos y vigencia de 2 años, ampliable a 3 o 4 en casos definidos.'],['23','Requisitos','Acta constitutiva, constancia fiscal y documento que acredite al representante.'],['24','Registro','En el sistema, a más tardar 30 días hábiles después de firmar.'],['25','Terminación','La SEMS puede pedir que termine si no cumple los criterios.']]],
+ ['VI','De los Convenios de Aprendizaje','file-check','¿Cómo entra un estudiante?','Regula el acuerdo individual. Se firma uno por estudiante y fija sus condiciones concretas: horario, duración, puestos, seguros y apoyos.',[['26','Contenido','Calendario, horas, vigencia, matriz, plan de rotación, seguros y apoyos.'],['27','Requisitos','La empresa o institución entrega su documentación como anexo.'],['28','Registro','Lo hace el Responsable de vinculación en máximo 30 días hábiles.'],['29','Validez','Solo vale mientras exista un Convenio de Colaboración vigente.']]],
+ ['VII','Del Sistema de Información','database','¿Dónde queda el registro?','Obliga a la SEMS a poner a disposición el sistema digital. Se compone de dos plataformas y debe cumplir las normas vigentes de tecnologías de la información.',[['30','Puesta a disposición','La SEMS ofrece la Plataforma Académica y la de Espacios de Formación Laboral.'],['31','Operación','Debe seguir las disposiciones jurídicas de tecnologías de la información y comunicación.']]]];
+const RULES=[
+ ['timer','Dedicación temporal','18 a 30 h','por semana en el espacio laboral','18 h son 3 días y 30 h son 5 días. Sube con los años y la madurez de la empresa.','8'],
+ ['calendar-clock','Duración de la formación','1 a 3 años','en el espacio laboral','Depende de la carrera. 3 años solo en tecnólogos de 8 semestres.','8'],
+ ['flag','Momento de ingreso','2.º ciclo','escolar','Antes hay que acreditar el primer ciclo.','11 I|12 II'],
+ ['target','Afinidad con el plan de estudios','75 %','mínimo en la Matriz de correspondencia','Mide cuánto coinciden los puestos de la empresa con lo que pide la carrera.','14 VI'],
+ ['shield-check','Protección del estudiante','2 seguros','médicos obligatorios','Facultativo del Instituto Mexicano del Seguro Social, por la escuela. Ampliado, por la empresa.','26 V'],
+ ['clock','Horario permitido','Sin noche','en ningún caso','Solo horario matutino o vespertino.','5 V'],
+ ['award','Certificación al egresar','2 certificados','al concluir','Bachillerato Nacional y Formación Profesional.','4 XXI'],
+ ['file-check','Plazo para registrar convenios','30 días hábiles','desde la firma','Aplica a los de Colaboración y a los de Aprendizaje.','24|28']];
+const arts=s=>s.split('|').map(art).join(' ');
+const ASK=[
+ ['est','Estudiante','Persona inscrita en una escuela que cursa un plan de educación media superior. Se incorpora a la opción dual a partir del segundo ciclo.','4 XXIX',[
+  ['Cumplir el requisito de entrada','Estar inscrito y acreditar el primer ciclo escolar.','11 I'],
+  ['Formalizar su participación','Firma su convenio. Si es menor de edad, su madre, padre o tutor legal consiente por escrito y firma.','11 II-III'],
+  ['Elegir dónde formarse','Manifiesta su preferencia por una empresa o institución.','11 VI'],
+  ['Aprender en dos sedes','Sigue su currículum en escuela y Plataforma Académica, y sus competencias en el espacio laboral.','11 IV'],
+  ['Cumplir y dejarse evaluar','Respeta su convenio y presenta las evaluaciones de su plan.','11 V|11 VIII'],
+  ['Avisar si está en riesgo','Informa al Responsable de vinculación si vive violencia, acoso o discriminación.','11 IX']]],
+ ['esc','Escuela','El plantel donde se imparte la educación media superior. El Acuerdo incluye CBTIS y CETIS, de la DGETI; CBTA, CBTF, CETAC, CETMAR y CMM, de la DGETAyCM; y BTED, de la DGBTED.','4 XXVI',[
+  ['Promover y difundir','Busca empresas e informa carreras, convocatorias y empresas con convenio.','12 I-II'],
+  ['Seleccionar con la empresa','Participa en elegir estudiantes y formalizar su convenio.','12 VII'],
+  ['Firmar y matricular','La dirección firma cada Convenio de Aprendizaje. El Responsable de vinculación inscribe al estudiante en ambas plataformas.','12 V|12 VI'],
+  ['Acompañar y evaluar','Designa tutores y docentes facilitadores, y supervisa la operación.','12 IX-X'],
+  ['Proteger al estudiante','Verifica su Seguro Médico Facultativo y procura un ambiente libre de violencia.','12 XIII|12 XVI'],
+  ['Informar cada mes','Entrega un informe mensual al Responsable de Educación Dual.','12 V']]],
+ ['sub','Subsistema','Institución de la SEMS que agrupa a los planteles. El Acuerdo solo llama así a tres: DGETI, DGETAyCM y DGBTED. Ver la pestaña Subsistemas.','4 LVII',[
+  ['Diseñar los planes','Prepara planes duales, pide opinión al Comité y los propone a la SEMS.','13 I-II|7'],
+  ['Validar empresas','Recibe sus solicitudes en la plataforma y valida su registro.','13 XIII'],
+  ['Firmar la colaboración','Celebra el Convenio de Colaboración, con anuencia de la SEMS.','13 XIV'],
+  ['Capacitar','Ofrece cursos a los actores, con programa validado por la SEMS.','13 VI-VII'],
+  ['Supervisar y registrar','Vigila escuelas y convenios, y mantiene al día las evaluaciones.','13 V|13 XVI|13 XVII'],
+  ['Garantizar protección y beca','Asegura seguridad médica ampliada por convenio y acceso a la beca.','13 XVIII|13 XXI'],
+  ['Informar cada trimestre','Reporta a la SEMS acciones y convenios.','13 XIX']]],
+ ['emp','Espacio laboral','Empresa o institución pública donde el estudiante sigue su Plan de rotación y desarrolla competencias laborales. Una empresa debe ser persona moral legalmente constituida.','4 XXVII',[
+  ['Formalizar','Su representante legal firma el Convenio de Colaboración.','14 I-II'],
+  ['Registrarse y ofertar','Se da de alta en la plataforma, elige planes afines, indica puestos y registra instructores.','14 III-IV|14 VII-VIII'],
+  ['Demostrar capacidad','Cuenta con infraestructura, instructores capacitados y certificados, y al menos 75 % de matriz.','14 VI'],
+  ['Seleccionar con la escuela','Define el perfil y participa en la selección.','14 V|14 IX'],
+  ['Contratar seguro ampliado','Cubre accidentes en la empresa y en los traslados.','14 XI'],
+  ['Dar apoyos','Salud integral, traslados y alimentación, según necesidades y capacidades.','14 XII'],
+  ['Cuidar el ambiente','Da igualdad de trato y evita violencia, acoso y discriminación.','14 XV-XVI']]]];
+const DIR=[['SEMS','Subsecretaría de Educación Media Superior'],['DGETI','Dirección General de Educación Tecnológica Industrial y de Servicios'],['DGETAyCM','Dirección General de Educación Tecnológica Agropecuaria y Ciencias del Mar'],['DGBTED','Dirección General de Bachillerato Tecnológico de Educación y Promoción Deportiva'],['DGCFT','Dirección General de Centros de Formación para el Trabajo'],['Escuelas','Los planteles de esas instituciones']];
+const SIG=[['BTED','Bachillerato Tecnológico en Educación y Promoción Deportiva'],['CBTA','Centro de Bachillerato Tecnológico Agropecuario'],['CBTF','Centro de Bachillerato Tecnológico Forestal'],['CBTIS','Centro de Bachillerato Tecnológico Industrial y de Servicios'],['CCT','Clave del Centro de Trabajo, identifica al plantel'],['CECyTE','Colegios de Estudios Científicos y Tecnológicos'],['CETAC','Centro de Estudios Tecnológicos en Aguas Continentales'],['CETI','Centro de Enseñanza Técnica Industrial'],['CETIS','Centro de Estudios Tecnológicos Industrial y de Servicios'],['CETMAR','Centro de Estudios Tecnológicos del Mar'],['CIFRHS','Comisión Interinstitucional para la Formación de Recursos Humanos para la Salud'],['CMM','Centro Multimodal de Educación Tecnológica del Mar y Aguas Continentales'],['CONALEP','Colegio Nacional de Educación Profesional Técnica'],['CONOCER','Consejo Nacional de Normalización y Certificación de Competencias Laborales'],['COSAC','Coordinación Sectorial Académica, dependiente de la SEMS'],['CURP','Clave Única de Registro de Población'],['DOF','Diario Oficial de la Federación'],['EMS','Educación Media Superior'],['IMSS','Instituto Mexicano del Seguro Social'],['RENAPO','Registro Nacional de Población'],['RFC','Registro Federal de Contribuyentes'],['SEP','Secretaría de Educación Pública']];
+const WHO=[
+ {i:'factory',g:'emp',n:'Empresa o institución pública',door:1,u:'/empresa',a:'Se registra, elige planes, indica puestos y registra instructores.',c:'14 III-IV|14 VII-VIII',p:'Crea su propia cuenta con RFC, nombre, correo, usuario y contraseña. Avanza por 5 módulos en orden.'},
+ {i:'school',g:'esc',n:'Escuela',door:1,u:'/escuela',a:'La SEMS la da de alta. Verifica contactos y matricula estudiantes.',c:'12 III|12 IV|12 VI',p:'Entra con la clave de su plantel (CCT) y contraseña. Ve empresas aceptadas, grupos, estudiantes, docentes y seguimiento.'},
+ {i:'network',g:'sub',n:'Subsistema',door:1,u:'/subsistema',a:'Dado de alta en ambas plataformas. Valida empresas y registra convenios.',c:'13 XI|13 XIII|24',p:'Entra con usuario y contraseña. Valida empresas, carga convenios y consulta listados de estudiantes, docentes y organismos.'},
+ {i:'megaphone',g:'apo',n:'Organismo empresarial',door:0,a:'Debe pedir acceso a la SEMS para monitorear a sus afiliadas.',c:'16',p:'Sin entrada visible. La empresa declara si pertenece a una cámara y el Subsistema ve un listado por organismo.'},
+ {i:'hard-hat',g:'emp',n:'Instructor',door:0,a:'La empresa lo registra en la plataforma.',c:'14 VIII',p:'Sin entrada propia. Aparece como dato capturado por la empresa, con su CURP y certificaciones.'},
+ {i:'graduation-cap',g:'est',n:'Estudiante',door:0,a:'Estudia en la Plataforma Académica. La escuela lo matricula.',c:'4 XLVI|12 VI',p:'Sin entrada en este portal. Lo registra su escuela, junto con su Convenio de Aprendizaje.'},
+ {i:'book-open-check',g:'esc',n:'Docente, facilitador y tutor',door:0,a:'El Docente facilitador evalúa mediante la Plataforma Académica.',c:'4 XX',p:'Sin entrada en este portal. La escuela los registra y los matricula en la Plataforma Académica.'}];
+const ROUTE=[
+ ['emp','Empresa o institución','Portal, entrada Empresa',[['Crea su cuenta','RFC, nombre, correo, usuario y contraseña. La activa desde su correo.'],['Registra sus datos','Datos generales, constancia fiscal, contacto, domicilio y actividad económica.'],['Agrega instructores','CURP, cargo y certificaciones.'],['Preselecciona carreras','Carrera, estado, municipio, plantel y lugares tentativos.'],['Comunica al subsistema','Acepta un manifiesto bajo protesta de decir verdad y envía.']]],
+ ['sub','Subsistema','Portal, entrada Subsistema',[['Valida a la empresa','Revisa sus evidencias. La empresa ve su estatus en aprobado.'],['Carga el Convenio de Colaboración','Queda registrado junto a la empresa validada.']]],
+ ['esc','Escuela','Portal, entrada Escuela',[['Ve la empresa aceptada','Si no aparece: falta oferta, validación o convenio, o la fecha no cubre el periodo.'],['Asigna ciclo y grupos','Prepara el periodo para matricular.'],['Registra estudiantes y docentes','Carga el Convenio de Aprendizaje de cada estudiante.']]],
+ ['est','Estudiante','Plataforma Académica',[['Queda matriculado','El convenio es indispensable para registrarlo. Ahí desarrolla su parte académica.']]]];
+function renderResumen(){
+ let rn=0;
+ $('#resumen').innerHTML=`
+ <div class="lead"><h2>Resumen del Acuerdo 28/11/25</h2><p>Esta página resume un solo documento oficial y la plataforma donde se opera. La investigación académica está en Evidencia.</p></div>
+ <div class="card"><h3>${ic('stamp')}Qué es este documento</h3>
+  <div class="facts">
+   <div><span class="lab">Nombre</span><p>Lineamientos Generales para impartir la educación media superior en la opción de educación dual</p></div>
+   <div><span class="lab">Emite</span><p>Secretaría de Educación Pública (SEP)</p></div>
+   <div><span class="lab">Publicación</span><p>Diario Oficial de la Federación (DOF), 18 nov 2025. Vigente desde el 19 nov 2025</p></div>
+   <div><span class="lab">Sustituye a</span><p>Acuerdo 02/02/22. Quienes ya estudiaban con ese acuerdo terminan con su programa</p></div>
+   <div><span class="lab">Texto oficial</span><p><a href="${S.A.u}" target="_blank" rel="noopener">Abrir en el Diario Oficial</a></p></div>
+   <div><span class="lab">Fecha de análisis</span><p>1 de noviembre de 2026</p></div>
+  </div>
+ </div>
+ <div class="card"><h3>${ic('users')}A quién va dirigido</h3>
+  <div class="aud">
+   <div class="audc main"><div class="lab">Obligados directamente ${art('2')}</div><p class="small muted">Deben cumplirlo sin firmar nada más.</p>
+    <dl class="sig">${DIR.map(d=>`<div><dt>${d[0]}</dt><dd>${d[1]}</dd></div>`).join('')}</dl></div>
+   <div class="audc"><div class="lab">Pueden adoptarlo ${art('3')}</div><p class="small">Autoridades educativas estatales, organismos descentralizados e instituciones autónomas. La SEMS promueve su adopción mediante instrumentos jurídicos.</p>
+    <p class="small muted">CONALEP, CECyTE y CETI no están en la lista del artículo 2.</p></div>
+   <div class="audc"><div class="lab">Participan por convenio ${art('22')}</div><p class="small">Empresas, instituciones públicas y organismos del sector empresarial. Asumen sus compromisos al firmar el Convenio de Colaboración.</p></div>
+  </div>
+  <details class="more"><summary>${ic('book-open-check')}Ver todas las siglas de esta página</summary><dl class="sig cols">${SIG.map(d=>`<div><dt>${d[0]}</dt><dd>${d[1]}</dd></div>`).join('')}</dl></details>
+ </div>
+ ${HOWTO}
+ <div class="card"><h3>${ic('sparkles')}La idea central ${art('1')}</h3>
+ <div class="formula" role="img" aria-label="Escuela más espacio laboral da doble certificación">
+  <div class="fbox" style="${gv('esc')}">${ic('school')}<b>Escuela</b><span class="small">Currículum fundamental y ampliado, en aula y Plataforma Académica</span></div>
+  <div class="fop">+</div>
+  <div class="fbox" style="${gv('emp')}">${ic('factory')}<b>Espacio laboral</b><span class="small">Competencias laborales, en una empresa o institución pública</span></div>
+  <div class="fop">${ic('arrow-right')}</div>
+  <div class="fbox" style="${gv('est')}">${ic('award')}<b>Doble Certificación</b><span class="small">Bachillerato Nacional más Formación Profesional</span></div>
+ </div></div>
+ <div class="lead"><h2>Las reglas que más importan</h2></div>
+ <div class="rules">${RULES.map(r=>`<div class="tile"><div class="rt">${ic(r[0])}${r[1]}</div><b>${r[2]}</b><span>${r[3]}</span><small>${r[4]}</small><span class="rcit">${arts(r[5])}</span></div>`).join('')}</div>
+ <div class="lead"><h2>Qué le pide a cada quien</h2><p>Quién es cada participante y qué obligaciones le fija el Capítulo III.</p></div>
+ <div class="grid2">${ASK.map(a=>`<div class="card asks" style="${gv(a[0])}"><h3>${ic(G[a[0]].i)}${a[1]}</h3>
+  <div class="lab" style="margin-top:8px">Quién es</div><p class="small">${a[2]} ${art(a[3])}</p>
+  <div class="lab" style="margin-top:10px">Qué se le pide</div>
+  <ul class="ob">${a[4].map(x=>`<li><b>${x[0]}.</b> <span>${x[1]}</span> ${arts(x[2])}</li>`).join('')}</ul></div>`).join('')}</div>
+ <div class="card"><h3>${ic('map')}Cómo está organizado</h3><p class="small muted" style="margin:4px 0 10px">Son 7 capítulos. Selecciona uno para ver qué pregunta responde y qué contiene.</p>
+  <div class="chapw"><div class="chap" id="chap"></div><div class="chapd" id="chapd"></div></div></div>
+ <div class="card" id="tl"><h3>${ic('calendar-clock')}Calendario de transitorios</h3><p class="small muted" style="margin:4px 0 2px">Los transitorios son los artículos finales que fijan fechas para aplicar el Acuerdo.</p>
+  <div class="tl">
+   <div class="tlp"><b>18 nov 2025</b><span>Publicación en el Diario Oficial</span></div>
+   <div class="tlp"><b>19 nov 2025</b><span>Entra en vigor</span></div>
+   <div class="tlp"><b>+15 días hábiles</b><span>Instalar el Comité Directivo</span></div>
+   <div class="tlp pend"><b>+180 días hábiles</b><span>Normas de control escolar, criterios de capacitación, plataformas y estructura curricular</span></div>
+   <div class="tlp"><b>Hasta egresar</b><span>Generaciones del 02/02/22 siguen con su programa</span></div>
+  </div>
+  <div class="note" style="margin-top:12px">${ic('info')}<span>Contando solo lunes a viernes, los 180 días terminarían desde fines de julio de 2026. Es una estimación del equipo: conviene confirmar qué ya se emitió.</span></div>
+ </div>
+ <div class="card"><h3>${ic('flag')}Por qué se emitió</h3>
+  <div class="grid3">
+   <div class="tile">${ic('target')}<b>100 %</b><span>de educación dual en media superior técnica, meta del Plan México</span></div>
+   <div class="tile">${ic('users')}<b>+150 mil</b><span>profesionistas y técnicos al año, meta del Plan México</span></div>
+   <div class="tile">${ic('layers')}<b>31 a 2</b><span>subsistemas de educación media superior a unificar: bachillerato general y tecnológico</span></div>
+  </div>
+  <p class="small muted" style="margin-top:9px">Fuente: Considerandos del Acuerdo 28/11/25.</p>
+ </div>
+ <div class="lead"><h2>La plataforma donde se opera</h2><p><b>Sí, son dos plataformas</b> dentro de un mismo sistema: una para registrar y vincular, otra para estudiar.</p></div>
+ <div class="card"><h3>${ic('network')}Cómo se relacionan</h3>
+  <div class="pdia">
+   <div class="psys">${ic('database')}<div><b>Sistema de Información de la Educación Dual</b><span class="small">Lo administra la SEMS. Registra a quienes participan y facilita la planificación. ${art('4 LVI')} ${art('30')}</span></div></div>
+   <div class="ptwo">
+    <div class="fbox" style="${gv('emp')}">${ic('link')}<span class="lab">Para registrar y vincular</span><b>Plataforma de Espacios de Formación Laboral</b>
+     <span class="small">Conecta escuelas con empresas, instituciones y organismos. ${art('4 XLVII')}</span>
+     <ul class="ob"><li>La empresa se registra y oferta lugares</li><li>El Subsistema la valida</li><li>La escuela la encuentra</li><li>Se registran los convenios</li></ul>
+     <span class="small"><b>En la práctica:</b> el portal Plataforma de Registro de Empresas. <a href="${S.PT.u}" target="_blank" rel="noopener">Abrir portal</a></span></div>
+    <div class="pbr">${ic('arrow-right')}<b>Matrícula</b><span class="small">La escuela inscribe a cada estudiante en ambas ${art('12 VI')}</span></div>
+    <div class="fbox" style="${gv('esc')}">${ic('monitor')}<span class="lab">Para estudiar</span><b>Plataforma Académica</b>
+     <span class="small">Espacio digital donde el estudiante trabaja su currículum con mediación docente. ${art('4 XLVI')}</span>
+     <ul class="ob"><li>1 hora de estudio por día en el espacio laboral ${art('8')}</li><li>El Docente facilitador evalúa ${art('4 XX')}</li><li>Se entra matriculado por la escuela</li></ul>
+     <span class="small"><b>En la práctica:</b> no encontramos una dirección pública.</span></div>
+   </div>
+  </div>
+  <div class="note" style="margin-top:12px">${ic('info')}<span><b>Inferencia del equipo.</b> El Acuerdo no da dirección web ni usa el nombre "Plataforma de Registro de Empresas". Las tratamos como la misma porque comparten el objetivo de vincular escuela y empresa, y las tareas. Conviene confirmarlo con la SEMS.</span></div>
+ </div>
+ <div class="card"><h3>${ic('lock')}Quién entra al portal</h3>
+  <p class="small muted" style="margin:4px 0 10px">Contraste entre lo que dice el Acuerdo y las entradas públicas del portal. La descripción interior viene de los manuales. ${src('MAN')}</p>
+  <div class="who">${WHO.map(w=>`<div class="whor" style="${gv(w.g)}"><div class="whon">${ic(w.i)}<b>${w.n}</b>${w.door?`<span class="y yes">${ic('circle-check')}Entrada propia</span><a class="small" href="${S.PT.u.replace(/\/$/,'')}${w.u}" target="_blank" rel="noopener">${w.u}</a>`:`<span class="y no">${ic('circle-minus')}Sin entrada propia</span>`}</div>
+   <div><div class="lab">Según el Acuerdo</div><p class="small">${w.a} ${arts(w.c)}</p></div>
+   <div><div class="lab">En el portal</div><p class="small">${w.p}</p></div></div>`).join('')}</div>
+ </div>
+ <div class="card"><h3>${ic('route')}Recorrido de la empresa al estudiante</h3>
+  <p class="small muted" style="margin:4px 0 10px">Cada fila es quien actúa. Los módulos se activan en orden. ${src('MAN')}</p>
+  <div class="lanes">${ROUTE.map(l=>`<div class="rlane" style="${gv(l[0])}"><div class="rhead">${ic(G[l[0]].i)}<b>${l[1]}</b><span class="small">${l[2]}</span></div><ol class="rsteps">${l[3].map(s=>`<li><em>${++rn}</em><b>${s[0]}</b><span class="small">${s[1]}</span></li>`).join('')}</ol></div>`).join('')}</div>
+ </div>
+ <div class="grid2">
+  <div class="card"><h3>${ic('chart-column')}Qué cuenta el portal</h3>
+   <div class="grid3" style="margin-top:8px">
+    <div class="tile"><b>3,337</b><span>empresas</span></div><div class="tile"><b>1,995</b><span>escuelas</span></div><div class="tile"><b>6</b><span>subsistemas</span></div>
+   </div>
+   <p class="small muted" style="margin-top:9px">Contadores de la portada a la fecha de análisis, 1 nov 2026. Son registros, no matrícula activa, y el detalle pide inicio de sesión. ${src('PT')}</p>
+  </div>
+  <div class="card"><h3>${ic('triangle-alert')}Qué falta verificar</h3>
+   <ul class="ob" style="margin-top:8px">
+    <li><b>Plataforma Académica.</b> No aparece en el portal una dirección pública. Una convocatoria de beca de 2023 exigía estar activo en ella. ${src('BE')}</li>
+    <li><b>Interior del portal.</b> Pide inicio de sesión. Lo descrito viene de manuales que no citan el Acuerdo 28/11/25.</li>
+    <li><b>Actualización.</b> El Acuerdo ordenó ajustar ambas plataformas en 180 días hábiles. Falta confirmar si ya ocurrió.</li>
+    <li><b>Soporte oficial.</b> soporte.educaciondual@sems.gob.mx</li>
+   </ul>
+  </div>
+ </div>`;
+ const c=$('#chap');
+ c.innerHTML=CHAP.map((x,i)=>`<button data-i="${i}" aria-pressed="${i===0}">${ic(x[2])}<span><b>Capítulo ${x[0]}</b><small>${x[3]}</small></span></button>`).join('');
+ const show=i=>{$$('button',c).forEach((b,j)=>b.setAttribute('aria-pressed',i===j));const x=CHAP[i];$('#chapd').innerHTML=`<h3>${x[3]}</h3><span class="small muted">Capítulo ${x[0]}. ${x[1]}</span><p>${x[4]}</p><div class="lab">Qué contiene</div><ul class="ob">${x[5].map(y=>`<li>${art(y[0])} <b>${y[1]}.</b> <span>${y[2]}</span></li>`).join('')}</ul>`};
+ c.addEventListener('click',e=>{const b=e.target.closest('button');if(b)show(+b.dataset.i)});show(0);
+}
+
+/* ---------- 2. Actores ---------- */
+const A=[
+ {id:'sems',g:'gob',i:'landmark',n:'SEP · SEMS',k:'Autoridad',d:[['Aprueba planes dual','7'],['Interpreta los Lineamientos','1'],['Administra el Sistema de Información','30'],['Puede pedir terminación anticipada de convenios','25']],r:[['tsub','Da anuencia a convenios'],['comite','Preside'],['ose','Da acceso a plataforma']]},
+ {id:'cosac',g:'gob',i:'compass',n:'COSAC',k:'Autoridad',d:[['Articula y coordina lo académico','4 XIII'],['Fija requisitos de Doble Certificación con el Subsistema','5 IX']],r:[['tsub','Acuerda requisitos'],['sems','Depende de']]},
+ {id:'comite',g:'gob',i:'users',n:'Comité Directivo',k:'Órgano colegiado',d:[['Opina sobre planes','20 III'],['Evalúa la implementación','20 V'],['Fomenta investigación','20 X']],r:[['tsub','Recomienda'],['ose','Sector empresarial con voz y voto'],['con','Asiento con voto']]},
+ {id:'tsub',g:'sub',i:'network',n:'Titular del Subsistema',k:'Autoridad',d:[['Firma Convenio de Colaboración con anuencia','13 XIV'],['Designa Responsable de Educación Dual','4 LII'],['Informa cada trimestre a la SEMS','13 XIX']],r:[['rep','Firma colaboración'],['red','Designa'],['sems','Informa']]},
+ {id:'red',g:'sub',i:'user-cog',n:'Responsable de Educación Dual',k:'Actor según el Acuerdo',d:[['Coordina plataforma, matrícula y convenios','4 LII'],['Registra colaboración en 30 días hábiles','24'],['Recibe informe mensual de la escuela','12 V']],r:[['dir','Recibe informe mensual'],['vin','Verifica registros'],['tsub','Reporta a']]},
+ {id:'form',g:'sub',i:'presentation',n:'Instancia Formadora',k:'Función',d:[['Capacita a los actores con programa validado','4 XXXIII'],['Expide constancias','13 IX']],r:[['ins','Capacita'],['tut','Capacita'],['sems','Valida programa']]},
+ {id:'dir',g:'esc',i:'school',n:'Director(a) del plantel',k:'Actor según el Acuerdo',d:[['Firma Convenios de Aprendizaje','12 V'],['Coordina áreas y delega','4 XVIII'],['Entrega informe mensual','12 V']],r:[['ges','Firma aprendizaje'],['fam','Firma aprendizaje'],['red','Informa']]},
+ {id:'vin',g:'esc',i:'link',n:'Responsable de vinculación',k:'Actor según el Acuerdo',d:[['Intermedia con empresas e instituciones','4 LIII'],['Matricula en ambas plataformas','12 VI'],['Registra aprendizaje en 30 días hábiles','28'],['Recibe avisos de vulnerabilidad','11 IX']],r:[['ges','Coordina con'],['est','Matricula y atiende'],['red','Reporta a'],['ose','Enlace']],e:['Pocos docentes cargan la gestión dual, con tiempo extra no remunerado.','D25']},
+ {id:'doc',g:'esc',i:'book-open-check',n:'Docente',k:'Actor según el Acuerdo',d:[['Corresponsable del aprendizaje','4 XIX'],['Evalúa en escuela','5 VIII']],r:[['est','Enseña']]},
+ {id:'fac',g:'esc',i:'monitor',n:'Docente facilitador',k:'Actor según el Acuerdo',d:[['Acompaña formación fundamental','4 XX'],['Evalúa en Plataforma y escuela','4 XX'],['Registra en control escolar','4 XX']],r:[['est','Acompaña']]},
+ {id:'tut',g:'esc',i:'user-check',n:'Tutor(a) académico(a)',k:'Actor según el Acuerdo',d:[['Registra evaluación de competencias','4 LX'],['Acompaña y media el aprendizaje','4 LX'],['Evalúa junto con el instructor','4 LX']],r:[['ins','Evalúa con'],['est','Da seguimiento']],e:['El docente confía en la nota del instructor y vigila los reportes semanales.','D25']},
+ {id:'est',g:'est',i:'graduation-cap',n:'Estudiante',k:'Participante, cap. III',d:[['Acredita el primer ciclo','11 I'],['Elige empresa o institución','11 VI'],['Puede concursar beca','11 VII'],['Informa si hay vulnerabilidad','11 IX']],r:[['ins','Aprende con'],['tut','Seguimiento'],['vin','Reporta riesgos']],e:['Satisfacción promedio de graduados: 3.5 de 4.','HM24']},
+ {id:'fam',g:'est',i:'house',n:'Madre, padre o tutor legal',k:'Parte del convenio',d:[['Consentimiento escrito para la selección','11 II'],['Firma aprendizaje si es menor de edad','11 III']],r:[['dir','Firma con'],['est','Autoriza']],e:['Firma el convenio, pero no aparece entre los actores del art. 4 I. Una madre entrevistada reporta dudas sobre la firma.','D26']},
+ {id:'rep',g:'emp',i:'building-2',n:'Representante legal',k:'Firmante',d:[['Firma Convenio de Colaboración','14 II'],['Presenta requisitos documentales','23'],['Acredita personalidad','27']],r:[['tsub','Firma colaboración'],['ges','La empresa lo selecciona']]},
+ {id:'ges',g:'emp',i:'briefcase',n:'Gestor(a) del espacio',k:'Actor según el Acuerdo',d:[['Dirige y da seguimiento','4 XXX'],['Gestiona firma de convenios','4 XXX']],r:[['vin','Coordina con'],['ins','Coordina'],['dir','Firma aprendizaje']]},
+ {id:'ins',g:'emp',i:'hard-hat',n:'Instructor(a)',k:'Actor según el Acuerdo',d:[['Orienta competencias según Plan de rotación','4 XXXVI'],['Evalúa con el tutor','4 XXXVI'],['Capacitado y certificado','14 VI']],r:[['tut','Evalúa con'],['est','Forma'],['iec','Se certifica con'],['form','Se capacita con']],e:['En pymes faltó personal para instruir sin frenar la producción.','C18']},
+ {id:'ose',g:'apo',i:'megaphone',n:'Organismos empresariales',k:'Participante',d:[['Pueden firmar colaboración','16'],['Monitorean a sus afiliadas en plataforma','16']],r:[['sems','Solicita acceso'],['rep','Promueve']],e:['Cámaras y personas comprometidas convencen a las empresas.','DR']},
+ {id:'con',g:'apo',i:'award',n:'CONOCER',k:'Certificación',d:[['Expide Certificado de competencia, opcional','5 X'],['Acredita instancias','4 XXXII']],r:[['iec','Acredita'],['est','Certifica, opcional']]},
+ {id:'iec',g:'apo',i:'clipboard-check',n:'Instancias Evaluadoras y Certificadoras',k:'Certificación',d:[['Orientan a empresas','15 I'],['Orientan a instructores','15 II']],r:[['ins','Certifica'],['con','Acreditada por']]},
+ {id:'int',g:'apo',i:'globe',n:'Cooperación internacional',k:'Participante',d:[['SEMS se vincula con gobiernos y organismos, con AMEXCID','17']],r:[['sems','Colabora con']],e:['Organizaciones alemanas, austriacas y suizas aportaron asesoría y recursos.','DR']}
+];
+const AS={sems:'La autoridad federal: aprueba, interpreta y administra el sistema.',cosac:'Coordina lo académico de la educación dual dentro de la SEMS.',comite:'Mesa nacional de autoridades y sector productivo que orienta el modelo.',tsub:'Dirige la institución que agrupa a los planteles.',red:'Coordina la opción dual en todo el Subsistema.',form:'El Subsistema cuando capacita a quienes operan el modelo.',dir:'Dirige el plantel y responde por la operación dual.',vin:'El puente entre la escuela y las empresas.',doc:'Profesor o profesora de la escuela.',fac:'Docente que acompaña lo académico, en escuela y plataforma.',tut:'Docente que sigue al estudiante mientras está en el espacio laboral.',est:'Quien cursa la opción dual. Es estudiante, inscrito en su escuela.',fam:'Autoriza y firma cuando el estudiante es menor de edad.',rep:'Quien firma a nombre de la empresa o institución.',ges:'Persona de la empresa que coordina la dual por dentro.',ins:'Persona de la empresa que enseña en el puesto de trabajo.',ose:'Cámaras y asociaciones que acercan a sus empresas.',con:'Organismo nacional que certifica competencias laborales.',iec:'Entidades acreditadas que evalúan y certifican personas.',int:'Gobiernos y organismos de otros países que colaboran con la SEMS.'};
+let sel='vin';
+const nodeBtn=a=>`<button class="node" data-id="${a.id}" style="${gv(a.g)}" aria-pressed="false">${ic(a.i)}<span>${a.n}</span></button>`;
+const lane=(g,t)=>`<div class="lane" style="${gv(g)}"><h3>${ic(G[g].i)}${t||G[g].n}</h3><div class="nodes">${A.filter(a=>a.g===g).map(nodeBtn).join('')}</div></div>`;
+function renderActores(){
+ $('#actores').innerHTML=`
+ <div class="lead"><h2>¿Quién hace qué?</h2><p>Selecciona una figura. Las líneas y los números muestran con quién se relaciona.</p></div>
+ <div class="origin"><span>${ic('stamp')}<b>Acuerdo 28/11/25:</b> definiciones, funciones y citas.</span><span>${ic('network')}<b>Síntesis del equipo:</b> relaciones del mapa, a partir del Acuerdo.</span><span>${ic('search')}<b>Investigación:</b> recuadro marcado aparte. No es del Acuerdo.</span></div>
+ ${HOWTO}
+ <div class="tiles">
+  <div class="tile">${ic('users')}<b>8</b><span>figuras son "Actores" para el Acuerdo: 6 escolares y 2 laborales</span>${art('4 I')}</div>
+  <div class="tile">${ic('graduation-cap')}<b>2</b><span>firman el convenio sin estar en esa lista: estudiante y familia</span>${art('4 XI')}</div>
+  <div class="tile">${ic('network')}<b>15</b><span>asientos máximos con voto en el Comité Directivo</span>${art('19')}</div>
+ </div>
+ <div class="actors">
+  <div class="net" id="net">
+   <svg class="links" id="links" aria-hidden="true"></svg>
+   ${lane('gob')}${lane('sub')}
+   <div class="mid">${lane('esc')}${lane('est')}${lane('emp')}</div>
+   ${lane('apo')}
+  </div>
+  <aside class="card panel" id="apanel" aria-live="polite"></aside>
+ </div>`;
+ $('#net').addEventListener('click',e=>{const b=e.target.closest('.node');if(b){sel=b.dataset.id;showActor()}});
+ showActor();
+}
+function showActor(){
+ const a=A.find(x=>x.id===sel), rel=a.r.map(r=>r[0]);
+ $$('.node').forEach(n=>{const id=n.dataset.id,ix=rel.indexOf(id),old=$('.relnum',n);if(old)old.remove();n.setAttribute('aria-pressed',id===sel);n.classList.toggle('rel',ix>=0);n.classList.toggle('dim',id!==sel&&ix<0);if(ix>=0)n.insertAdjacentHTML('beforeend',`<span class="relnum">${ix+1}</span>`)});
+ $('#apanel').style.cssText=gv(a.g);
+ $('#apanel').innerHTML=`
+  <div class="ph"><div class="bigic">${ic(a.i)}</div><div><h3>${a.n}</h3><span class="small muted">${a.k}</span></div></div>
+  <div>${gtag(a.g)}</div>
+  <p class="plain">${AS[a.id]}</p>
+  <div><div class="lab">${ic('stamp')} Qué le toca, según el Acuerdo</div><ul class="do">${a.d.map(x=>`<li>${ic('circle-check')}<span>${x[0]}</span> ${art(x[1])}</li>`).join('')}</ul></div>
+  <div><div class="lab">${ic('network')} Relaciones, síntesis del equipo</div><ul class="do">${a.r.map((r,i)=>`<li><span class="relnum">${i+1}</span><span><b>${A.find(y=>y.id===r[0]).n}.</b> ${r[1]}</span></li>`).join('')}</ul></div>
+  ${a.e?`<div class="note ev">${ic('search')}<span><b>Investigación, no es del Acuerdo.</b> ${a.e[0]} ${src(a.e[1])}</span></div>`:''}`;
+ drawLinks();
+}
+function drawLinks(){
+ const net=$('#net'),svg=$('#links'); if(!net||!net.offsetParent||innerWidth<=720){if(svg)svg.innerHTML='';return}
+ const a=A.find(x=>x.id===sel), B=net.getBoundingClientRect(), f=$(`.node[data-id="${sel}"]`).getBoundingClientRect();
+ const c=r=>({x:r.left-B.left+r.width/2,y:r.top-B.top+r.height/2}), p=c(f); let out='';
+ a.r.forEach((r,i)=>{
+  const q=c($(`.node[data-id="${r[0]}"]`).getBoundingClientRect());
+  const mx=(p.x+q.x)/2,my=(p.y+q.y)/2,dx=q.x-p.x,dy=q.y-p.y,L=Math.hypot(dx,dy)||1,o=Math.min(46,L*.16)*(i%2?1:-1);
+  const cx=mx-dy/L*o,cy=my+dx/L*o;
+  out+=`<path d="M${p.x} ${p.y}Q${cx} ${cy} ${q.x} ${q.y}" fill="none" stroke="var(--ink)" stroke-width="2"/>`;
+ });
+ svg.innerHTML=out;
+}
+addEventListener('resize',drawLinks);
+
+/* ---------- 3. Procesos ---------- */
+const GLOS=[
+ ['factory','Espacio de formación laboral','La empresa o institución pública donde se aprende trabajando.','4 XXVII'],
+ ['user-check','Puesto de aprendizaje','Lugar dentro del espacio laboral donde se practica durante un tiempo.','4 LI'],
+ ['sparkles','Competencias laborales','Lo que se sabe hacer. Básicas: generales. Extendidas: propias de un oficio.','4 VII'],
+ ['target','Matriz de correspondencia','Tabla que compara lo que enseña el puesto con lo que pide el plan de estudios.','4 XXXVII'],
+ ['shuffle','Plan de rotación','Calendario de puestos y actividades que seguirá el estudiante.','4 XLIV'],
+ ['building-2','Empresa madura','Líder en dual, con instructores certificados y apoyos completos.','4 XXIV'],
+ ['network','Subsistema','En el Acuerdo: DGETI, DGETAyCM y DGBTED.','4 LVII'],
+ ['award','Doble Certificación','Dos documentos: estudios de bachillerato y formación profesional.','4 XXI']];
+const P=[
+ {ph:0,n:'Diseñar el plan',i:'clipboard-list',w:['sub','gob'],q:'Decidir qué carreras se ofrecerán en opción dual y qué se aprenderá en ellas.',f:'Que lo aprendido en la empresa cuente para el plan de estudios y responda a una necesidad real.',c:['El Subsistema estudia si la carrera es viable y pertinente','Pide opinión al Comité Directivo','Propone el plan a la SEMS','La SEMS aprueba y se difunde en el Sistema de Información'],o:'Plan y Programa aprobado y publicado',pl:'Sin plazo fijo. Salud requiere opinión adicional de la CIFRHS',a:['7','13 I','13 II','20 III'],r:['Las carreras de salud piden un trámite extra.','A'],m:{gob:'A',sub:'E'}},
+ {ph:0,n:'Registrar el espacio',i:'building-2',w:['emp','sub'],q:'Dar de alta a la empresa o institución en la plataforma oficial.',f:'Que el Subsistema la valide y las escuelas puedan encontrarla.',c:['Crea cuenta y carga datos fiscales y domicilio','Registra a sus instructores','Elige carreras, planteles y lugares tentativos','Avisa al Subsistema, que valida su registro'],o:'Empresa validada y visible para el plantel',pl:'Los módulos se activan en orden',a:['14 III','14 IV','14 VII','14 VIII','13 XIII'],r:['Si no aparece: falta validar, falta convenio o la fecha no cubre el periodo.','MAN'],m:{sub:'S',emp:'E'}},
+ {ph:0,n:'Convenio de Colaboración',i:'file-pen-line',w:['sub','gob','emp'],q:'El acuerdo marco entre la autoridad educativa y la empresa, institución u organismo. Es el primer documento formal.',f:'Fijar compromisos de cada parte. Sin él no existe la opción dual en esa empresa.',c:['La empresa entrega acta constitutiva, constancia fiscal y poder del representante','La SEMS da su anuencia','Firman el Subsistema o la SEMS y la empresa','Se registra en el sistema'],o:'Convenio firmado con bases, compromisos y vigencia',pl:'Registrar en máximo 30 días hábiles. Vigencia inicial: 2 años',a:['22','23','24','13 XIV'],r:['Dura 2 años, y la planificación 3.','A'],m:{gob:'A',sub:'FR',emp:'F'}},
+ {ph:1,n:'Planificar',i:'target',w:['esc','emp'],q:'Escuela y empresa definen juntas qué aprenderá el estudiante, dónde y cuándo.',f:'Convertir el plan de estudios en actividades reales dentro de la empresa.',c:['Comparan puestos contra plan de estudios: Matriz de correspondencia','Ordenan puestos y tiempos: Plan de rotación','Ajustan horas al calendario escolar autorizado'],o:'Matriz y Plan de rotación',pl:'Mínimo 75 % de matriz. Planificación a 3 años',a:['8','9','10','14 VI'],r:['En un caso estudiado en Jalisco, el criterio rondaba 85 %.','D25'],m:{sub:'S',esc:'E',emp:'E'}},
+ {ph:1,n:'Seleccionar',i:'search',w:['esc','emp','est'],q:'Elegir qué estudiantes participan y a qué espacio laboral van.',f:'Empatar el interés del estudiante, lo que pide la carrera y el perfil de la empresa.',c:['La escuela difunde carreras, convocatorias y empresas','El estudiante manifiesta su preferencia','Si es menor, la familia consiente por escrito','Escuela y empresa seleccionan juntas'],o:'Estudiante asignado a un espacio laboral',pl:'Tras acreditar el primer ciclo',a:['11 I','11 II','11 VI','12 II','12 VII','14 IX'],r:['La escuela suele mirar notas y conducta. La empresa, actitud y potencial.','D25'],m:{esc:'E',emp:'E',est:'P'}},
+ {ph:1,n:'Convenio de Aprendizaje',i:'file-check',w:['esc','emp','est'],q:'El acuerdo individual: uno por estudiante. Firman escuela, empresa, estudiante y, si es menor, su madre, padre o tutor legal.',f:'Dejar por escrito horario, duración, puestos, seguros y apoyos de esa persona.',c:['Se integran calendario, matriz y plan de rotación','Se precisan seguros y apoyos','Firman las partes','El Responsable de vinculación lo registra'],o:'Un convenio firmado por estudiante',pl:'Registrar en máximo 30 días hábiles. Vigencia de 1 a 2 años, hasta 3 en tecnólogos',a:['26','27','28','29'],r:['Pierde validez si no hay Convenio de Colaboración vigente.','A'],m:{sub:'S',esc:'F',emp:'F',est:'F'}},
+ {ph:1,n:'Matricular',i:'database',w:['esc','sub'],q:'Inscribir formalmente al estudiante en la opción dual dentro de los sistemas de la SEMS.',f:'Darle acceso a la Plataforma Académica y dejar registro para supervisar.',c:['El Responsable de vinculación captura sus datos','Registra su Convenio de Aprendizaje','Lo inscribe en ambas plataformas','El Subsistema acompaña y supervisa'],o:'Estudiante activo en ambas plataformas',pl:'Requiere el convenio previo',a:['12 VI','13 XII'],r:['El manual de escuela pide cargar el convenio de cada alumno.','MAN'],m:{sub:'S',esc:'R'}},
+ {ph:2,n:'Formar y dar seguimiento',i:'shuffle',w:['esc','emp','est','sub'],q:'La etapa central: parte de la semana se aprende en la escuela y plataforma, y parte en el espacio laboral.',f:'Desarrollar competencias en situaciones reales sin abandonar la formación académica.',c:['El Instructor guía en cada puesto','El Tutor académico da seguimiento','El Docente facilitador acompaña lo académico','Escuela informa al mes y Subsistema al trimestre'],o:'Plan de rotación cumplido e informes entregados',pl:'Calendario y horario apegados al escolar. Nunca nocturno',a:['5 II','5 III','5 V','12 V','12 IX','13 XIX'],r:['Si el alumno solo limpia o no rota, el docente debe intervenir.','D25'],m:{gob:'S',sub:'S',esc:'E',emp:'E',est:'P'}},
+ {ph:2,n:'Evaluar y certificar',i:'award',w:['esc','emp','sub','gob'],q:'Comprobar lo aprendido y emitir los documentos finales.',f:'Que quien egresa acredite sus estudios y su formación laboral.',c:['Docentes evalúan lo académico','Instructor y Tutor evalúan competencias','Se cumplen requisitos de Subsistema y COSAC','Se emite la Doble Certificación. CONOCER es opcional'],o:'Doble Certificación',pl:'Según normas de control escolar de la SEP',a:['5 VIII','5 IX','5 X','13 XVII'],r:['Depende de normas que el Acuerdo ordenó emitir.','A'],m:{gob:'A',sub:'R',esc:'E',emp:'E',est:'P'}}
+];
+const PH=['Preparar','Vincular','Formar y certificar']; let ps=0;
+const CODE={A:'Aprueba o fija',F:'Firma',E:'Ejecuta',R:'Registra',S:'Supervisa o valida',P:'Participa'};
+const RLAB={A:'Atención en el Acuerdo',MAN:'Dato del manual de la plataforma',D25:'Dato de investigación, no del Acuerdo'};
+function renderProcesos(){
+ let n=0;
+ $('#procesos').innerHTML=`
+ <div class="lead"><h2>De la oferta al certificado</h2><p>Nueve pasos, explicados para quien llega sin contexto. Selecciona uno para ver qué es, para qué sirve y cómo se hace.</p></div>
+ ${HOWTO}
+ <div class="card"><h3>${ic('book-open-check')}Ocho palabras para empezar</h3>
+  <div class="glos">${GLOS.map(g=>`<div>${ic(g[0])}<b>${g[1]}</b><span>${g[2]}</span><span>${art(g[3])}</span></div>`).join('')}</div>
+ </div>
+ <div class="phases">${PH.map((h,i)=>`<div class="phase"><h3>${h}</h3><div class="steps">${P.filter(p=>p.ph===i).map(p=>{n++;return `<button class="step" data-i="${P.indexOf(p)}" aria-pressed="false">${ic(p.i)}<em>${n}</em>${p.n}</button>`}).join('')}</div></div>`).join('')}</div>
+ <div class="card"><div class="stepd" id="stepd"></div></div>
+ <div class="card"><h3>${ic('list-checks')}Quién actúa en cada paso</h3>
+  <div class="legendline" style="margin-bottom:8px">${Object.entries(CODE).map(([k,v])=>`<span><b class="mk" style="--g:var(--g-apo)">${k}</b>${v}</span>`).join('')}</div>
+  <div class="scroll"><table style="min-width:640px"><thead><tr><th>Paso</th>${['gob','sub','esc','emp','est'].map(g=>`<th>${ic(G[g].i)} ${G[g].n}</th>`).join('')}</tr></thead>
+  <tbody>${P.map((p,i)=>`<tr data-step="${i}"><td>${i+1}. ${p.n}</td>${['gob','sub','esc','emp','est'].map(g=>`<td>${[...(p.m[g]||'')].map(c=>`<span class="mk" style="${gv(g)}" data-tip="${CODE[c]}">${c}</span>`).join('')}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
+ </div>
+ <div class="card tool"><h3>${ic('timer')}Calculadora de horas</h3>
+  <div class="guide">
+   <div><div class="lab">Para qué sirve</div><p class="small">Responde cuántas horas y días por semana irá un estudiante al espacio laboral en cada año de su formación. Ayuda a planear antes de firmar el Convenio de Aprendizaje. ${art('8')}</p></div>
+   <div><div class="lab">Cómo usarla</div><ol class="how"><li>Elige el campo de la carrera.</li><li>Si aparece, indica cuánto dura el Plan de rotación.</li><li>Mueve la barra al porcentaje de la Matriz de correspondencia.</li><li>Marca la casilla solo si la empresa cumple los criterios de madurez. ${art('4 XXIV')}</li></ol></div>
+   <div><div class="lab">Cómo leer el resultado</div><p class="small">Cada fila es una semana tipo de ese año. Naranja es día en el espacio laboral y azul, día en la escuela.</p></div>
+  </div>
+  <div class="tgrid">
+   <div class="ctrl v">
+    <label for="h-c">1. Campo de la carrera
+     <select id="h-c"><option value="g1">Sociales, negocios, artes, servicios, educación</option><option value="g2" selected>Ciencias, TIC, ingeniería, agro, salud</option><option value="tec">Tecnólogo de 8 semestres</option></select></label>
+    <label for="h-d" id="h-dl">2. Duración del Plan de rotación
+     <select id="h-d"><option value="m">Menos de 2 años</option><option value="d" selected>2 años</option></select></label>
+    <label for="h-m"><span>3. Matriz de correspondencia: <output id="h-mo">80</output> %</span>
+     <input id="h-m" type="range" min="50" max="100" value="80"></label>
+    <label class="check" for="h-x"><input id="h-x" type="checkbox">4. Empresa madura o institución equiparada</label>
+   </div>
+   <div id="h-out" aria-live="polite"></div>
+  </div>
+ </div>
+ <div class="card tool"><h3>${ic('calendar-clock')}Simulador de convenios</h3>
+  <div class="guide">
+   <div><div class="lab">Para qué sirve</div><p class="small">Comprueba si el Convenio de Aprendizaje de un estudiante termina antes de que venza el Convenio de Colaboración de su empresa. Si este vence antes, el de aprendizaje deja de valer. ${art('29')}</p></div>
+   <div><div class="lab">Cómo usarlo</div><ol class="how"><li>Elige el tipo de espacio. Eso fija cuánto dura la Colaboración.</li><li>Elige cuánto dura el Convenio de Aprendizaje.</li><li>Mueve la barra al mes en que inicia, contado desde la firma de la Colaboración.</li></ol></div>
+   <div><div class="lab">Cómo leer el resultado</div><p class="small">Cada barra es un periodo sobre la misma línea de tiempo. El recuadro rojo muestra los meses que quedarían sin cubrir.</p></div>
+  </div>
+  <div class="tgrid">
+   <div class="ctrl v">
+    <label for="c-t">1. Tipo de espacio laboral
+     <select id="c-t"><option value="24">Regular: colaboración de 2 años</option><option value="36">Madura o equiparada: hasta 3 años</option><option value="48">Tecnólogo de 8 semestres: hasta 4 años</option></select></label>
+    <label for="c-a">2. Duración del Convenio de Aprendizaje
+     <select id="c-a"></select></label>
+    <label for="c-s"><span>3. Inicia en el mes <output id="c-so">6</output> de la Colaboración</span>
+     <input id="c-s" type="range" min="0" max="30" step="1" value="6"></label>
+   </div>
+   <div id="c-out" aria-live="polite"></div>
+  </div>
+ </div>`;
+ $('.phases').addEventListener('click',e=>{const b=e.target.closest('.step');if(b){ps=+b.dataset.i;showStep()}});
+ $('#procesos tbody').addEventListener('click',e=>{const t=e.target.closest('tr');if(t){ps=+t.dataset.step;showStep()}});
+ ['h-c','h-d','h-m','h-x'].forEach(i=>$('#'+i).addEventListener('input',calcHours));
+ ['c-t','c-a','c-s'].forEach(i=>$('#'+i).addEventListener('input',calcConv));
+ showStep();calcHours();fillCA();calcConv();
+}
+function showStep(){
+ const p=P[ps];
+ $$('.step').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.i===ps));
+ $$('#procesos tbody tr').forEach(t=>t.classList.toggle('on',+t.dataset.step===ps));
+ $('#stepd').innerHTML=`
+  <div class="sblock"><div class="lab">Paso ${ps+1} de 9</div><h3 class="sttl">${p.n}</h3>
+   <div class="lab">Qué es</div><p>${p.q}</p>
+   <div class="lab">Para qué sirve</div><p>${p.f}</p>
+   <div class="chips">${p.w.map(gtag).join('')}</div></div>
+  <div class="sblock"><div class="lab">Cómo se hace</div><ol class="how">${p.c.map(x=>`<li>${x}</li>`).join('')}</ol></div>
+  <div class="sblock"><div class="lab">Resultado</div><p>${p.o}</p>
+   <div class="lab">Plazo o condición</div><p>${p.pl}</p>
+   <div class="lab">Dónde lo dice el Acuerdo</div><div class="chips">${p.a.map(art).join('')}</div>
+   <div class="note">${ic('triangle-alert')}<span><b>${RLAB[p.r[1]]}.</b> ${p.r[0]}</span></div></div>`;
+}
+/* Art. 8: horas por año según campo, duración, madurez y matriz */
+function hoursPlan(c,d,mat,mad){
+ if(mat<75)return{block:true,years:[]};
+ const up=mad&&mat>75;
+ const low=up?24:18, high=up?30:24;
+ if(c==='tec')return{years:[low,high,high],up};
+ if(c==='g1'||d==='m')return{years:[low],partial:c==='g1',up};
+ return{years:[low,high],up};
+}
+function calcHours(){
+ const c=$('#h-c').value,d=$('#h-d').value,mat=+$('#h-m').value,mad=$('#h-x').checked;
+ $('#h-mo').textContent=mat;
+ $('#h-dl').style.display=c==='g2'?'':'none';
+ const r=hoursPlan(c,d,mat,mad),o=$('#h-out');
+ if(r.block){o.innerHTML=`<div class="note">${ic('circle-x')}<span><b>No alcanza el mínimo.</b> Con ${mat} % esta empresa no puede participar: se requiere al menos 75 % de la matriz. ${art('14 VI')}</span></div>`;return}
+ const dayN=h=>h/6, wk=['L','M','M','J','V'];
+ const label=(y,i)=>c==='g1'?'1 a 1.5 años':(c==='g2'&&d==='m')?'Menos de 2':`Año ${i+1}`;
+ const say=r.years.map((h,i)=>`${r.years.length>1?`año ${i+1}: `:''}${h} horas, ${dayN(h)} días por semana`).join('; ');
+ const hint=r.up?'Se aplica la carga máxima porque la empresa es madura y supera el 75 %.':mad?'Para la carga máxima no basta el 75 % exacto: el Acuerdo pide más de 75 %.':mat>75?'Se aplica la carga base. Las horas máximas también exigen empresa madura o institución equiparada.':'Se aplica la carga base. Las horas máximas piden más de 75 % y empresa madura o institución equiparada.';
+ o.innerHTML=`<p class="res"><b>Resultado.</b> ${say[0].toUpperCase()+say.slice(1)}.</p><p class="small muted">${hint} ${art('8 III')}</p><div class="week">${r.years.map((h,i)=>`<div class="wrow"><b>${label(h,i)}</b>${wk.map((w,j)=>`<div class="day ${j<dayN(h)?'e':''}" data-tip="${j<dayN(h)?'Espacio laboral':'Escuela'}">${w}</div>`).join('')}<b style="text-align:right">${h} h</b></div>`).join('')}</div>
+ <div class="legendline" style="margin-top:8px"><span><i class="dot" style="--g:var(--g-emp)"></i>Espacio laboral</span><span><i class="dot" style="--g:var(--g-esc)"></i>Escuela</span><span>${r.up?'Carga máxima':'Carga base'}</span></div>
+ <div class="lab" style="margin-top:12px">Un día en el espacio laboral</div>
+ <div class="dayb" role="img" aria-label="6 horas de formación, 1 de plataforma, 1 de comida"><div style="flex:6;background:var(--g-emp)">6 h formación</div><div style="flex:1;background:var(--g-esc);color:#fff">1 h</div><div style="flex:1;background:var(--g-est)">1 h</div></div>
+ <p class="small muted" style="margin-top:5px">Las 6 h cuentan como horas de formación. La hora de Plataforma Académica y la de comida son adicionales. El Acuerdo no fija qué días de la semana: los de la gráfica son ilustrativos. ${art('8')}</p>`;
+}
+function fillCA(){
+ const t=+$('#c-t').value,s=$('#c-a'),v=s.value;
+ const o=t===48?[12,18,24,36]:[12,18,24];
+ s.innerHTML=o.map(m=>`<option value="${m}">${m/12} ${m===12?'año':'años'}</option>`).join('');
+ s.value=o.includes(+v)?v:'24';
+}
+/* Art. 29: el aprendizaje solo vale con colaboración vigente */
+function convCheck(cc,ca,start){const end=start+ca,gap=Math.max(0,end-cc);return{end,gap,ok:gap===0}}
+function calcConv(){
+ fillCA();
+ const cc=+$('#c-t').value,ca=+$('#c-a').value,st=+$('#c-s').value;
+ $('#c-so').textContent=st;
+ const r=convCheck(cc,ca,st),M=Math.max(54,r.end+2),W=560,L=118,R=14,x=m=>L+(W-L-R)*m/M;
+ const rows=[['Planificación',0,36,'--g-sub'],['Colaboración',0,cc,'--g-gob'],['Aprendizaje',st,Math.min(r.end,cc),'--g-esc']],last=cc-ca,yr=n=>n===12?'1 año':(n/12)+' años';
+ let g='';
+ for(let m=0;m<=M;m+=12)g+=`<line x1="${x(m)}" x2="${x(m)}" y1="10" y2="124" stroke="var(--line)"/><text x="${x(m)}" y="140" font-size="11" text-anchor="middle" opacity=".75">${yr(m)}</text>`;
+ rows.forEach((w,i)=>{const y=18+i*36;g+=`<text x="0" y="${y+15}" font-size="12.5">${w[0]}</text><rect x="${x(w[1])}" y="${y}" width="${Math.max(0,x(w[2])-x(w[1]))}" height="22" rx="4" fill="var(${w[3]})"/>`});
+ if(r.gap>0){const y=18+72;g+=`<rect x="${x(cc)}" y="${y}" width="${x(r.end)-x(cc)}" height="22" rx="4" fill="none" stroke="var(--bad)" stroke-width="2" stroke-dasharray="4 3"/><line x1="${x(cc)}" x2="${x(cc)}" y1="10" y2="124" stroke="var(--bad)" stroke-width="2"/>`}
+ const say=r.ok?`El aprendizaje termina en el mes ${r.end} y la colaboración vence en el mes ${cc}. Queda cubierto.`:`El aprendizaje terminaría en el mes ${r.end}, pero la colaboración vence en el mes ${cc}. Para quedar cubierto debe iniciar a más tardar en el mes ${last}, o renovarse la colaboración.`;
+ $('#c-out').innerHTML=`<p class="res"><b>Resultado.</b> ${say}</p><figure class="fig" style="margin-top:10px"><div class="scroll"><svg class="chart" viewBox="0 0 ${W} 146" style="min-width:440px" role="img" aria-label="Línea de tiempo de planificación, colaboración y aprendizaje">${g}</svg></div></figure>
+ ${r.ok?`<span class="status ok">${ic('circle-check')}Aprendizaje cubierto</span>`:`<span class="status bad">${ic('triangle-alert')}${r.gap} meses sin colaboración vigente</span>`}
+ <div class="legendline" style="margin-top:8px"><span><i class="dot" style="--g:var(--g-sub)"></i>Planificación: 3 años</span><span><i class="dot" style="--g:var(--g-gob)"></i>Colaboración: ${yr(cc)}</span><span><i class="dot" style="--g:var(--g-esc)"></i>Aprendizaje: ${yr(ca)}</span></div>
+ <p class="small muted" style="margin-top:8px">La planificación pide 3 años y la colaboración regular dura 2. El Acuerdo no detalla la renovación: confirmar con la SEMS. ${art('10')} ${art('22')} ${art('26')} ${art('29')}</p>`;
+}
+
+/* ---------- 4. Subsistemas ---------- */
+const SB=[
+ {n:'DGETI',f:'Dirección General de Educación Tecnológica Industrial y de Servicios',pl:'CBTIS y CETIS',v:'Directa',s:1,o:1,c:1,p:1,fi:1},
+ {n:'DGETAyCM',f:'Dirección General de Educación Tecnológica Agropecuaria y Ciencias del Mar',pl:'CBTA, CBTF, CETAC, CETMAR y CMM',v:'Directa',s:1,o:1,c:1,p:1,fi:1},
+ {n:'DGBTED',f:'Dirección General de Bachillerato Tecnológico de Educación y Promoción Deportiva',pl:'BTED',v:'Directa',s:1,o:1,c:1,p:1,fi:1},
+ {n:'DGCFT',f:'Dirección General de Centros de Formación para el Trabajo',pl:'Sin plantel definido en el Acuerdo',v:'Directa',s:0,o:1,c:1,p:0,fi:0},
+ {n:'CECyTE',f:'Colegios de Estudios Científicos y Tecnológicos',pl:'Colegios',v:'Por adopción',s:0,o:0,c:.5,p:1,fi:0},
+ {n:'CONALEP',f:'Colegio Nacional de Educación Profesional Técnica',pl:'Planteles CONALEP',v:'Por adopción',s:0,o:0,c:1,p:1,fi:0},
+ {n:'CETI',f:'Centro de Enseñanza Técnica Industrial',pl:'Planteles CETI',v:'Por adopción',s:0,o:0,c:1,p:1,fi:0}
+];
+const COL=[
+ ['s','¿Quién es Subsistema según el Acuerdo?','Subsistema por definición','art. 4 LVII','Solo estas tres son "Subsistema" en el Acuerdo. Cuando un artículo dice "los Subsistemas deben", se refiere a ellas.',art('4 LVII')],
+ ['o','¿A quién obliga directamente?','Obligado directo','art. 2','Deben cumplir los Lineamientos sin firmar nada más. La DGCFT queda obligada aunque no se define como Subsistema. La lista también incluye a la SEMS y a las Escuelas.',art('2')],
+ ['fi','¿Quién puede firmar Convenios de Colaboración?','Firma colaboración','Acuerdo, art. segundo','Sus titulares reciben la facultad de firmar, con anuencia de la SEMS y opinión favorable de la Unidad de Asuntos Jurídicos y Regulación.','Acuerdo, artículo segundo.'],
+ ['c','¿Quién se sienta en el Comité Directivo?','Comité Directivo','art. 19','Tienen asiento con voz y voto. CECyTE participa de forma indirecta, por medio de su Coordinación de ODES, adscrita a la DGETI.',art('19')],
+ ['p','¿Quién aparece en el portal?','Portal y manual','6 subsistemas','El portal y sus manuales los tratan como subsistemas. Suman a CECyTE, CONALEP y CETI, y dejan fuera a la DGCFT.',src('PT')]];
+let lens='s';
+const mark=v=>v===1?`<span class="y yes">${ic('circle-check')}Sí</span>`:v===.5?`<span class="y part">${ic('circle-dashed')}Indirecto</span>`:`<span class="y no">${ic('circle-minus')}No</span>`;
+function renderSub(){
+ $('#subsistemas').innerHTML=`
+ <div class="lead"><h2>¿Cuántos subsistemas hay?</h2><p>Un subsistema es la institución que agrupa a un conjunto de planteles. La respuesta cambia según la fuente: <b>el Acuerdo define 3, el portal cuenta 6</b> y, al sumar ambos, aparecen 7 organismos.</p></div>
+ ${HOWTO}
+ <div class="tiles">
+  <div class="tile">${ic('stamp')}<b>3</b><span>según el Acuerdo: DGETI, DGETAyCM y DGBTED</span></div>
+  <div class="tile">${ic('monitor')}<b>6</b><span>según el portal: agrega CECyTE, CONALEP y CETI</span></div>
+  <div class="tile">${ic('layers')}<b>7</b><span>organismos en juego, al sumar la DGCFT, obligada por el Acuerdo</span></div>
+ </div>
+ <div class="note">${ic('info')}<span><b>Por qué importa.</b> Según a quién se incluya cambia quién firma los convenios, quién está obligado y a quién aplica cualquier análisis.</span></div>
+ <div class="card"><h3>${ic('filter')}Compara los 7 organismos</h3>
+  <div class="guide two">
+   <div><div class="lab">Para qué sirve</div><p class="small">Muestra qué organismos cuentan según la pregunta que se haga. Un organismo puede estar dentro para una pregunta y fuera para otra.</p></div>
+   <div><div class="lab">Cómo se usa</div><p class="small">Pulsa una pregunta. Abajo aparece la respuesta y la tabla resalta la columna que le corresponde.</p></div>
+  </div>
+  <div class="lens" id="lens">${COL.map(c=>`<button data-k="${c[0]}" aria-pressed="${c[0]===lens}">${c[1]}</button>`).join('')}</div>
+  <div class="ans" id="lansw" aria-live="polite"></div>
+  <div class="scroll" style="margin-top:12px"><table id="sbt" style="min-width:820px"></table></div>
+ </div>
+ <div class="card"><h3>${ic('arrow-left-right')}Cómo entra cada organismo a la norma</h3>
+  <p class="small muted" style="margin:4px 0 10px">Hay dos caminos. El primero obliga por sí solo. El segundo requiere firmar un instrumento jurídico.</p>
+  <div class="ways">
+   <div class="way"><b>${ic('stamp')} Directa ${art('2')}</b><div class="pills">${['DGETI','DGETAyCM','DGBTED'].map(x=>`<span class="pill">${x}</span>`).join('')}<span class="pill">DGCFT<small>Obligada, no Subsistema</small></span></div><span class="small muted">Dependen de la SEMS. Aplican los Lineamientos sin instrumento adicional.</span></div>
+   <div class="way"><b>${ic('file-pen-line')} Por adopción ${art('3')}</b><div class="pills">${['CONALEP','CECyTE','CETI'].map(x=>`<span class="pill">${x}</span>`).join('')}<span class="pill">Autoridades estatales<small>Y organismos descentralizados</small></span></div><span class="small muted">La SEMS promueve la adopción con instrumentos jurídicos. Hay que confirmar cada instrumento. CONALEP ya presenta el Acuerdo como marco. ${src('BB')}</span></div>
+  </div>
+ </div>
+ <div class="card"><h3>${ic('chart-column')}Dónde se concentra la participación reportada</h3>
+  <p class="small muted" style="margin:4px 0 10px">Muestra qué parte de la participación dual correspondió a cada organismo en una encuesta.</p>
+  <div style="display:flex;gap:2px;height:38px" role="img" aria-label="CECyTE 48 por ciento, CONALEP 40 por ciento, otros 12 por ciento">
+   <div style="flex:48;background:var(--s-b);color:#fff;border-radius:4px 0 0 4px;display:grid;place-items:center;font-weight:600">CECyTE 48 %</div>
+   <div style="flex:40;background:color-mix(in srgb,var(--s-b) 62%,var(--surface));display:grid;place-items:center;font-weight:600">CONALEP 40 %</div>
+   <div style="flex:12;background:var(--s-a);color:#fff;border-radius:0 4px 4px 0;display:grid;place-items:center;font-weight:600;font-size:13px">Otros 12 %</div>
+  </div>
+  <p class="small" style="margin-top:9px"><b>88 % está fuera de los 3 Subsistemas del Acuerdo.</b> <span class="muted">Encuesta SEMS-GIZ 2020-2021. Otros es el resto calculado. Puede reflejar quién respondió, no toda la matrícula.</span> ${src('HM24')}</p>
+ </div>
+ <div class="note">${ic('triangle-alert')}<span><b>Dato por conciliar.</b> CONALEP expuso un máximo de "24 o 32" horas semanales. El Acuerdo dice 24 o 30. ${art('8')} ${src('BB')}</span></div>
+ <div class="note">${ic('info')}<span>El portal también cuenta 1,995 escuelas y 3,337 empresas. Son registros, no matrícula activa, y el detalle pide inicio de sesión. ${src('PT')}</span></div>`;
+ $('#lens').addEventListener('click',e=>{const b=e.target.closest('button');if(b){lens=b.dataset.k;tableSub()}});
+ tableSub();
+}
+function tableSub(){
+ const C=COL.find(c=>c[0]===lens),yes=SB.filter(s=>s[lens]===1),half=SB.filter(s=>s[lens]===.5);
+ $$('#lens button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===lens));
+ $('#lansw').innerHTML=`<div class="ansn"><b>${yes.length}</b><span>de 7${half.length?` y ${half.length} indirecto`:''}</span></div><div><div class="pills">${yes.map(s=>`<span class="pill">${s.n}</span>`).join('')}${half.map(s=>`<span class="pill">${s.n}<small>Indirecto</small></span>`).join('')}</div><p class="small" style="margin-top:7px">${C[4]} ${C[5]}</p></div>`;
+ $('#sbt').innerHTML=`<thead><tr><th>Organismo</th>${COL.map(c=>`<th class="${c[0]===lens?'hl':''}">${c[2]}<br><span style="font-weight:400">${c[3]}</span></th>`).join('')}<th>Planteles</th><th>Entrada a la norma</th></tr></thead>
+ <tbody>${SB.map(s=>`<tr class="${s[lens]?'':'off'}"><td><b>${s.n}</b><br><span class="small muted">${s.f}</span></td>${COL.map(c=>`<td class="${c[0]===lens?'hl':''}">${mark(s[c[0]])}</td>`).join('')}<td class="small">${s.pl}</td><td class="small">${s.v}</td></tr>`).join('')}</tbody>`;
+}
+
+/* ---------- 5. Evidencia ---------- */
+const T=[
+ {g:['esc','emp'],i:'clipboard-check',t:'Evaluación compartida',p:'a',n:['Instructor y tutor evalúan juntos.','5 VIII'],x:'El docente confía en la nota, pero vigila reportes semanales. Empresas usan evaluaciones internas.',s:['D25','C18']},
+ {g:['emp'],i:'shuffle',t:'Rotación real',p:'a',n:['Plan de rotación ligado a resultados de aprendizaje.','4 XLIV'],x:'En talleres manda el trabajo que llega. En Sinaloa se cambia de empresa para completar puestos.',s:['D25','AP24']},
+ {g:['emp'],i:'factory',t:'Capacidad empresarial',p:'a',n:['Matriz de 75 % e instructores capacitados y certificados.','14 VI'],x:'Pymes sin personal para instruir, padrón limitado y escasa participación empresarial.',s:['C18','AP24','CA25']},
+ {g:['esc'],i:'users',t:'Carga docente',p:'a',n:['Cinco figuras escolares e informe mensual.','12 V'],x:'Pocos docentes gestionan el modelo, a menudo con tiempo extra. La carga de actividades condiciona el funcionamiento.',s:['D25','ES25']},
+ {g:['est','esc'],i:'book-open-check',t:'Formación fundamental',p:'a',n:['1 h diaria en Plataforma Académica.','8'],x:'En Estado de México, 26 % dice que matemáticas mejoró mucho y 18 % inglés.',s:['HM24','AP24']},
+ {g:['est','emp'],i:'wallet',t:'Apoyo económico',p:'a',n:['Alimentación y traslados según capacidad.','14 XII'],x:'$600 a $1,200 por semana, sin mínimo. Es el rubro de empresa peor valorado.',s:['D25','HM24']},
+ {g:['sub'],i:'landmark',t:'Actores ausentes',p:'m',n:['El Comité reúne a educación y sector empresarial.','19'],x:'En la adopción del modelo faltaron Trabajo, Economía y sindicatos.',s:['AR24']},
+ {g:['est'],i:'compass',t:'Expectativas',p:'m',n:['Formar para una vida productiva.','6'],x:'Aprendices valoran el programa, pero priorizan llegar a educación superior.',s:['HC25','D25']},
+ {g:['est','emp'],i:'briefcase',t:'Primer empleo',p:'m',n:['Competencias para incorporarse al mundo del trabajo.','4 IX'],x:'La formación adicional pertinente eleva la probabilidad de empleo formal.',s:['HM26','ZT20']},
+ {g:['esc','emp'],i:'search',t:'Selección',p:'m',n:['Escuela y empresa seleccionan.','12 VII'],x:'La escuela reparte para dar equidad. La selección condiciona el funcionamiento.',s:['D25','ES25']},
+ {g:['est'],i:'house',t:'Consentimiento familiar',p:'m',n:['Consentimiento expreso, firmado y por escrito.','11 II'],x:'Las familias suelen enterarse por sus hijos. Una madre reporta confusión sobre una firma.',s:['D25','D26']},
+ {g:['est','emp'],i:'bus',t:'Traslados',p:'m',n:['Facilitar desplazamientos.','14 XII'],x:'De 40 minutos a 2 horas para quienes cruzan municipios.',s:['D25']},
+ {g:['sub','esc'],i:'hard-hat',t:'Equipamiento escolar',p:'m',n:['El Subsistema aporta infraestructura.','13 III'],x:'Escuelas dependen de donaciones básicas. Baja inversión en infraestructura escolar.',s:['D25','JE26']},
+ {g:['sub'],i:'network',t:'Coordinación',p:'m',n:['Una regulación y un Comité Directivo.','18'],x:'Una organización habla de "26 modelos". El relevo de funcionarios obliga a rehacer relaciones.',s:['DR']},
+ {g:['esc','emp'],i:'users-round',t:'Género',p:'m',n:['Priorizar a mujeres en áreas STEM.','5 XI'],x:'Estereotipos excluyen a mujeres en taller y empresa. 12 de 413 en Mantenimiento automotriz.',s:['ES26','HR26','D25']}
+];
+const IMP=[['Hacer tu trabajo',67.1,83.3],['Perspectivas de carrera',63.8,80.8],['Interactuar',63.8,78.2],['Comunicar ideas',59.0,71.8],['Emprender',51.5,53.8],['Español',45.9,59.0],['Computación',44.1,48.7],['Matemáticas',25.8,47.4],['Inglés',17.5,30.8]];
+const SAT=[['Trato recibido',3.6,3.6],['Materiales y equipo',3.6,3.6],['Apoyo para buscar empleo',3.1,3.4],['Apoyo financiero',2.8,3.2]];
+const LV={E:'Media superior',S:'Superior',M:'Sistema o mixto',C:'Empresa y transferencia'};
+const THN={imp:'Implementación',gob:'Gobernanza y vinculación',tra:'Transferencia internacional',act:'Empresas e instructores',com:'Competencias y aprendizaje',ins:'Inserción laboral',est:'Estudiantes y familias',eva:'Evaluación',gen:'Género'};
+let tf='all', cf='E';
+function dumb(data,min,max,ticks,fmt,lbl,aria){
+ const W=640,L=178,R=30,H=34+data.length*30,x=v=>L+(W-L-R)*(v-min)/(max-min);let g='';
+ ticks.forEach(t=>{g+=`<line x1="${x(t)}" x2="${x(t)}" y1="20" y2="${H-8}" stroke="var(--line)"/><text x="${x(t)}" y="13" font-size="11" text-anchor="middle" opacity=".75">${fmt(t)}</text>`});
+ data.forEach((d,i)=>{const y=38+i*30,a=x(d[1]),b=x(d[2]),show=lbl.includes(d[0]),same=a===b;
+  g+=`<g data-tip="${d[0]}: Estado de México ${fmt(d[1])}, Coahuila ${fmt(d[2])}"><rect x="0" y="${y-14}" width="${W}" height="30" fill="transparent"/><text x="0" y="${y+4}" font-size="12.5">${d[0]}</text>
+  <line x1="${a}" x2="${b}" y1="${y}" y2="${y}" stroke="var(--s-a)" stroke-width="2"/>
+  <circle cx="${b}" cy="${y}" r="7" fill="var(--s-b)" stroke="var(--surface)" stroke-width="2"/>
+  <circle cx="${a}" cy="${y}" r="${same?3.5:6}" fill="var(--surface)" stroke="var(--s-a)" stroke-width="2.5"/>
+  ${show?`<text x="${a-11}" y="${y+4}" font-size="11.5" text-anchor="end">${fmt(d[1])}</text><text x="${b+11}" y="${y+4}" font-size="11.5">${fmt(d[2])}</text>`:''}</g>`});
+ return `<svg class="chart" viewBox="0 0 ${W} ${H}" style="min-width:520px" role="img" aria-label="${aria}">${g}</svg>`;
+}
+const legend2=`<div class="legendline" style="margin-bottom:6px"><span><svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="var(--s-a)" stroke-width="2.5"/></svg>Estado de México</span><span><svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="6" fill="var(--s-b)"/></svg>Coahuila</span></div>`;
+const tbl=(h,rows)=>`<details><summary>Ver tabla</summary><div class="scroll"><table><thead><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div></details>`;
+function stack(name,m,h){const t=m+h,p=m/t*100;return `<div style="margin-top:12px" data-tip="${name}: ${m} mujeres y ${h} hombres"><div class="small" style="display:flex;justify-content:space-between;gap:8px"><b>${name}</b><span>${m} mujeres de ${t} (${p.toFixed(1)} %)</span></div><div style="display:flex;gap:2px;height:16px;margin-top:4px"><div style="flex:0 0 ${Math.max(p,1)}%;background:var(--s-b);border-radius:4px 0 0 4px"></div><div style="flex:1;background:var(--s-a);border-radius:0 4px 4px 0"></div></div></div>`}
+function yearChart(){
+ const Y=BIB.years,W=640,H=214,L=26,B=24,T0=14,mx=15,x=i=>L+(W-L-6)*i/Y.length,bw=(W-L-6)/Y.length-5,y=v=>H-B-(H-B-T0)*v/mx;let g='';
+ [0,5,10,15].forEach(t=>{g+=`<line x1="${L}" x2="${W}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)"/><text x="${L-6}" y="${y(t)+4}" font-size="11" text-anchor="end" opacity=".75">${t}</text>`});
+ Y.forEach((d,i)=>{const e=d.E,o=d.S+d.M+d.C,X=x(i)+2;
+  g+=`<g data-tip="${d.y}: ${e} de media superior y ${o} de otros niveles"><rect x="${X-2}" y="${T0}" width="${bw+4}" height="${H-B-T0}" fill="transparent"/>`;
+  if(e)g+=`<rect x="${X}" y="${y(e)}" width="${bw}" height="${y(0)-y(e)}" fill="var(--s-b)"/>`;
+  if(o)g+=`<rect x="${X}" y="${y(e+o)}" width="${bw}" height="${y(e)-y(e+o)-(e?2:0)}" rx="3" fill="var(--s-a)"/>`;
+  g+=`<text x="${X+bw/2}" y="${H-7}" font-size="11" text-anchor="middle" opacity=".8">${String(d.y).slice(2)}</text></g>`});
+ return `<svg class="chart" viewBox="0 0 ${W} ${H}" style="min-width:480px" role="img" aria-label="Publicaciones por año. La media superior crece desde 2024">${g}</svg>`;
+}
+function hbars(rows,max,cls=''){return `<div class="bars">${rows.map(r=>`<div class="bar ${r[1]?'':'z'} ${cls}"><span>${r[0]}</span><i style="width:${r[1]/max*100}%"></i><b>${r[1]}</b></div>`).join('')}</div>`}
+function renderEv(){
+ const B=BIB,instRows=[['CONALEP',B.instE.CONALEP||0],['DGETI',B.instE.DGETI||0],['DGETAyCM',B.instE.DGETAyCM||0],['CECyTE',B.instE.CECyTE||0],['DGBTED',0],['CETI',0]];
+ const lvRows=['S','E','M','C'].map(k=>[LV[k],B.lv[k]]);
+ const thRows=Object.keys(THN).map(k=>[THN[k],B.thE[k]||0]).sort((a,b)=>b[1]-a[1]);
+ $('#evidencia').innerHTML=`
+ <div class="lead"><h2>Estudio bibliométrico: norma contra hallazgos</h2><p>Medimos qué se ha publicado sobre formación dual en México y lo comparamos con el Acuerdo 28/11/25. Los hallazgos sirven como base para la caracterización. No evalúan el Acuerdo.</p></div>
+ <div class="card"><h3>${ic('route')}Cómo se hizo</h3>
+  <div class="prisma">
+   <div><b>${B.ident}</b><span>resultados en OpenAlex, con 10 búsquedas</span></div>${ic('arrow-right')}
+   <div><b>${B.uniq}</b><span>registros únicos, 2013 a nov 2026</span></div>${ic('arrow-right')}
+   <div><b>${B.oa}</b><span>incluidos. ${B.ex} excluidos por no tratar de dual en México</span></div>${ic('arrow-right')}
+   <div class="hi"><b>${B.n}</b><span>en el corpus, con ${B.bn} añadidos desde referencias</span></div>
+  </div>
+  <p class="small muted" style="margin-top:10px">Cada documento se clasificó por nivel, institución y tema con su título y resumen. El cruce con el Acuerdo busca términos en ese mismo texto.</p>
+ </div>
+ <div class="tiles">
+  <div class="tile">${ic('library')}<b>${B.n}</b><span>documentos analizados</span></div>
+  <div class="tile">${ic('graduation-cap')}<b>${B.lv.E}</b><span>son de media superior, el nivel que regula el Acuerdo</span></div>
+  <div class="tile">${ic('timer')}<b>19 de 20</b><span>de media superior salieron desde 2022</span></div>
+  <div class="tile">${ic('stamp')}<b>0</b><span>citan el Acuerdo 28/11/25 en título o resumen</span></div>
+ </div>
+ <div class="grid2">
+  <div class="card"><h3>${ic('chart-column')}Publicaciones por año</h3>
+   <div class="legendline" style="margin-bottom:6px"><span><i class="dot" style="--g:var(--s-b)"></i>Media superior</span><span><i class="dot" style="--g:var(--s-a)"></i>Otros niveles</span></div>
+   <figure class="fig"><div class="scroll">${yearChart()}</div><figcaption>El tema en media superior es muy reciente. 2026 llega a noviembre.</figcaption></figure>
+   ${tbl(['Año','Media superior','Superior','Mixto','Empresa'],B.years.filter(y=>y.E+y.S+y.M+y.C).map(y=>[y.y,y.E,y.S,y.M,y.C]))}
+  </div>
+  <div class="card"><h3>${ic('layers')}Nivel del corpus</h3>${hbars(lvRows,Math.max(...lvRows.map(r=>r[1])),'wide')}
+   <div class="lab" style="margin-top:16px">Instituciones nombradas en media superior</div>${hbars(instRows,Math.max(...instRows.map(r=>r[1])),'wide')}
+   <p class="small muted" style="margin-top:8px">Otros ${B.eNoInst} documentos no nombran institución en título o resumen.</p>
+  </div>
+ </div>
+ <div class="card"><h3>${ic('scale')}La comparación: temas del Acuerdo contra la literatura</h3>
+  <p class="small muted" style="margin-bottom:8px">Documentos que mencionan cada tema en título o resumen.</p>
+  <div class="scroll"><table class="xt" style="min-width:600px"><thead><tr><th>Tema del Acuerdo</th><th>Dónde</th><th>Todo el corpus</th><th>Media superior</th><th>Lectura</th></tr></thead>
+  <tbody>${[...B.cross].sort((a,b)=>b.all-a.all).map(c=>`<tr><td>${c.n}</td><td>${art(c.art)}</td><td><span class="xb"><i style="width:${c.all/10*100}%"></i><b>${c.all}</b></span></td><td><span class="xb e"><i style="width:${c.ems/10*100}%"></i><b>${c.ems}</b></span></td><td>${c.all===0?`<span class="status bad">${ic('circle-x')}Vacío</span>`:c.ems===0?`<span class="status warn">${ic('triangle-alert')}Sin media superior</span>`:`<span class="status ok">${ic('circle-check')}Con base</span>`}</td></tr>`).join('')}</tbody></table></div>
+  <div class="note" style="margin-top:12px">${ic('flag')}<span><b>Lectura:</b> la literatura habla de personas: instructores, tutores y familias. Casi no habla de los instrumentos del Acuerdo: convenios, matriz, seguros, plataformas y Comité.</span></div>
+ </div>
+ <div class="grid2">
+  <div class="card"><h3>${ic('search')}Temas en media superior</h3>${hbars(thRows,Math.max(...thRows.map(r=>r[1])),'wide2')}
+   <p class="small muted" style="margin-top:8px">Un documento puede tener varios temas.</p></div>
+  <div class="card"><h3>${ic('award')}Más citados</h3><ol class="tops">${B.top.map(t=>`<li><b>${t.c}</b><span>${t.a} ${t.y}. ${t.t}</span></li>`).join('')}</ol>
+   <p class="small muted" style="margin-top:8px">${B.doc.filter(d=>d.c===0).length} documentos aún no tienen citas en OpenAlex. Fuente con más textos: ${B.ven[0][0]}, ${B.ven[0][1]}, casi todos de nivel superior.</p></div>
+ </div>
+ <div class="card"><h3>${ic('list-checks')}Corpus completo</h3>
+  <div class="filter" id="cf">${['E','S','M','C','all'].map(k=>`<button data-k="${k}" aria-pressed="${k===cf}">${k==='all'?'Todos':LV[k]}</button>`).join('')}</div>
+  <div class="scroll" style="margin-top:10px;max-height:380px;overflow:auto"><table id="cft" style="min-width:680px"></table></div>
+ </div>
+ <div class="note">${ic('info')}<span><b>Límites del estudio.</b> OpenAlex no cubre toda la literatura en español y puede subcontar citas. La clasificación se apoyó en título y resumen, y 10 documentos no tienen resumen. Conviene que el equipo revise la clasificación antes de publicar cifras.</span></div>
+ <div class="lead"><h2>Hallazgos que pueden servir de base</h2><p>Lo que pide el Acuerdo junto a lo que ha observado la investigación. La prioridad es criterio del equipo. Casi todo es anterior al Acuerdo.</p></div>
+ <div class="filter" id="tf"><button data-k="all" aria-pressed="true">Todos</button>${['esc','emp','est','sub'].map(g=>`<button data-k="${g}" aria-pressed="false">${ic(G[g].i)}${G[g].n}</button>`).join('')}</div>
+ <div class="tens" id="tens"></div>
+ <div class="lead"><h2>Datos de fuentes leídas a fondo</h2></div>
+ <div class="grid2">
+  <div class="card"><h3>${ic('sparkles')}Dicen que "mejoró mucho"</h3>${legend2}
+   <figure class="fig"><div class="scroll">${dumb(IMP,0,100,[0,25,50,75,100],v=>v+' %',['Hacer tu trabajo','Matemáticas','Inglés'],'Coahuila supera al Estado de México en todos los rubros. Matemáticas e inglés son los más bajos')}</div>
+   <figcaption>El trabajo mejora mucho más que matemáticas e inglés. ${src('HM24')}</figcaption></figure>
+   ${tbl(['Rubro','Estado de México','Coahuila'],IMP.map(r=>[r[0],r[1]+' %',r[2]+' %']))}
+  </div>
+  <div class="card"><h3>${ic('heart-pulse')}Satisfacción de graduados</h3>${legend2}
+   <figure class="fig"><div class="scroll">${dumb(SAT,1,4,[1,2,3,4],v=>String(v),['Trato recibido','Apoyo financiero'],'Apoyo financiero es el rubro más bajo en ambas entidades')}</div>
+   <figcaption>Escala de 1 a 4. El dinero y la búsqueda de empleo quedan al final. ${src('HM24')}</figcaption></figure>
+   ${tbl(['Rubro','Estado de México','Coahuila'],SAT.map(r=>[r[0],r[1],r[2]]))}
+   <div style="margin-top:14px"><div class="lab">Mujeres en dos carreras, Conalep Jalisco 2020-2021</div>
+   ${stack('Mantenimiento automotriz',12,401)}${stack('Química industrial',40,77)}
+   <div class="legendline" style="margin-top:8px"><span><i class="dot" style="--g:var(--s-b)"></i>Mujeres</span><span><i class="dot" style="--g:var(--s-a)"></i>Hombres</span>${src('D25')}</div></div>
+  </div>
+ </div>
+ <div class="grid2">
+  <div class="card"><h3>${ic('chart-column')}Escala declarada</h3>
+   <div class="tiles" style="grid-template-columns:repeat(auto-fit,minmax(112px,1fr))">
+    <div class="tile"><b>915</b><span>aprendices 2013-14</span></div>
+    <div class="tile"><b>5,068</b><span>aprendices 2017-18</span></div>
+    <div class="tile"><b>10,319</b><span>aprendices 2022, cerca de 2 % de la EMS</span></div>
+    <div class="tile"><b>17 mil</b><span>declarado, feb 2025</span></div>
+   </div>
+   <p class="small muted" style="margin-top:9px">Fuentes distintas, no comparables de forma estricta. ${src('C18')} ${src('HM24')} ${src('RZ')}</p></div>
+  <div class="card"><h3>${ic('stamp')}Encuesta SEMS-GIZ 2021-2022</h3>
+   <div class="tiles" style="grid-template-columns:repeat(auto-fit,minmax(112px,1fr))">
+    <div class="tile"><b>92 %</b><span>de egresados: ayudó a entender su carrera</span></div>
+    <div class="tile"><b>81 %</b><span>de empresas: mejor preparación que en escolarizada</span></div>
+    <div class="tile"><b>69 %</b><span>de empresas forma hasta 5 educandos</span></div>
+   </div>
+   <p class="small muted" style="margin-top:9px">Autorreporte de 492 empresas, 304 escuelas, 1,374 egresados y 2,695 educandos. ${src('SG22')}</p></div>
+ </div>`;
+ $('#tf').addEventListener('click',e=>{const b=e.target.closest('button');if(b){tf=b.dataset.k;tens()}});
+ $('#cf').addEventListener('click',e=>{const b=e.target.closest('button');if(b){cf=b.dataset.k;corp()}});
+ tens();corp();
+}
+function tens(){
+ $$('#tf button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===tf));
+ $('#tens').innerHTML=T.filter(t=>tf==='all'||t.g.includes(tf)).map(t=>`<article class="ten"><header><h3>${ic(t.i)}${t.t}</h3><span class="prio ${t.p}">${ic(t.p==='a'?'triangle-alert':'info')}${t.p==='a'?'Alta':'Media'}</span></header>
+ <div class="nvp"><div><span class="lab">Norma</span><span>${t.n[0]}</span><span>${art(t.n[1])}</span></div><div><span class="lab">Hallazgo</span><span>${t.x}</span><span class="chips">${t.s.map(src).join('')}</span></div></div>
+ <div class="chips">${t.g.map(gtag).join('')}</div></article>`).join('');
+}
+function corp(){
+ $$('#cf button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===cf));
+ const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+ const d=BIB.doc.filter(x=>cf==='all'||x.l===cf).slice().sort((a,b)=>b.y-a.y);
+ $('#cft').innerHTML=`<thead><tr><th>Año</th><th>Documento</th><th>Institución</th><th>Temas</th><th>Citas</th></tr></thead><tbody>${d.map(x=>`<tr><td>${x.y}</td><td>${x.u?`<a href="${x.u}" target="_blank" rel="noopener">${esc(x.a)}. ${esc(x.t)}</a>`:`${esc(x.a)}. ${esc(x.t)}`}</td><td class="small">${x.i.join(', ')||'·'}</td><td class="small">${x.h.map(h=>THN[h]).join(', ')}</td><td>${x.c===null?'n/d':x.c}</td></tr>`).join('')}</tbody>`;
+}
+
+/* ---------- 6. Autodiagnóstico ---------- */
+const D={gob:'Gobernanza',vin:'Vinculación',pla:'Planificación',for:'Formación',pro:'Protección',reg:'Registro'};
+const DI={gob:'landmark',vin:'link',pla:'target',for:'graduation-cap',pro:'shield-check',reg:'database'};
+const Q={
+ esc:{n:'Plantel',i:'school',q:[
+  ['vin','Dado de alta por SEMS en plataforma','12 III',1],['vin','Promueve la vinculación','12 I'],['vin','Difunde planes, convocatorias y padrón','12 II'],['vin','Verifica contacto de cada empresa','12 IV'],
+  ['pla','Planificación materializada y en ejecución','12 XI',1],['pla','Calendario apegado y sin horario nocturno','5 V',1],['pla','Tutores y facilitadores designados','12 X'],['pla','Participa en la selección','12 VII'],
+  ['for','Garantiza los tres currículums','12 XII'],['for','Mediación digital en Plataforma Académica','12 VIII'],['for','Supervisa, da seguimiento y evalúa','12 IX'],
+  ['pro','Seguro Médico Facultativo verificado','12 XIII',1],['pro','Acompaña inscripción a beca','12 XIV'],['pro','Ambiente libre de violencias','12 XVI',1],['pro','Igualdad sustantiva','12 XV'],['pro','Perspectiva de género en difusión y selección','5 XI'],
+  ['reg','Convenio de Aprendizaje por cada estudiante','26',1],['reg','Registro del convenio en 30 días hábiles','28'],['reg','Matrícula en ambas plataformas','12 VI',1],['reg','Informe mensual entregado','12 V']]},
+ emp:{n:'Espacio laboral',i:'factory',q:[
+  ['gob','Persona moral legalmente constituida','14 I',1],['gob','Convenio de Colaboración vigente','14 II',1],['gob','Requisitos documentales completos','23'],
+  ['vin','Registro en plataforma','14 III',1],['vin','Plan compatible con su actividad','14 IV'],['vin','Perfil de estudiantes definido','14 V'],['vin','Participa en la selección','14 IX'],
+  ['pla','Matriz de correspondencia de 75 % o más','14 VI',1],['pla','Puestos de aprendizaje declarados','14 VII'],['pla','Horario sin turno nocturno','5 V',1],
+  ['for','Infraestructura y materiales suficientes','14 VI'],['for','Instructores capacitados y certificados','14 VI',1],['for','Instructores registrados','14 VIII'],['for','Facilita certificación de instructores','14 XIII'],['for','Facilita Certificado de competencia','14 XIV'],
+  ['pro','Seguro médico ampliado contratado','14 XI',1],['pro','Salud integral, traslados y alimentación','14 XII'],['pro','Igualdad sustantiva','14 XV'],['pro','Ambiente libre de violencias','14 XVI',1]]},
+ sub:{n:'Subsistema',i:'network',q:[
+  ['gob','Convenios con anuencia de la SEMS','13 XIV',1],['gob','Remite convenios en 30 días hábiles','13 XIV'],['gob','Informe trimestral a la SEMS','13 XIX'],['gob','Supervisa cumplimiento','13 V'],
+  ['pla','Opinión del Comité sobre planes','13 I'],['pla','Diseño de planes dual','13 II'],['pla','Personal, organización e infraestructura','13 III',1],
+  ['for','Asesoría técnica a escuelas','13 IV'],['for','Capacitación validada por la SEMS','13 VI'],['for','Oferta de capacitación registrada','13 VIII'],['for','Constancias a actores','13 IX'],
+  ['pro','Seguridad médica ampliada garantizada','13 XVIII',1],['pro','Acceso a beca garantizado','13 XXI'],['pro','Igualdad sustantiva','13 XX'],['pro','Ambiente libre de violencias','13 XXII',1],
+  ['reg','Alta en ambas plataformas','13 XI',1],['reg','Valida solicitudes de empresas','13 XIII'],['reg','Registro de colaboración en 30 días hábiles','24'],['reg','Verifica Convenios de Aprendizaje','13 XVI'],['reg','Registro de evaluaciones actualizado','13 XVII']]}
+};
+const SEG=[['c','Cumple','circle-check'],['p','Parcial','circle-dashed'],['n','No','circle-x'],['x','N/A','circle-minus']];
+const EX='cccpccpcpccpcccpcpcp'; /* patrón ficticio de muestra */
+const exFor=k=>Object.fromEntries(Q[k].q.map((_,i)=>[i,EX[i%EX.length]]));
+/* Puntaje: Cumple 1, Parcial .5, No 0. N/A y sin responder no cuentan. Crítico sin cumplir bloquea. */
+function scoreOf(qs,ans){
+ const dims={};let sum=0,cnt=0,resp=0;const blk=[];
+ qs.forEach((q,i)=>{const a=ans[i];dims[q[0]]=dims[q[0]]||{s:0,c:0};
+  if(a)resp++;
+  if(a==='c'||a==='p'||a==='n'){const v=a==='c'?1:a==='p'?.5:0;sum+=v;cnt++;dims[q[0]].s+=v;dims[q[0]].c++}
+  if(q[3]&&a!=='c'&&a!=='x')blk.push(i)});
+ return{pct:cnt?Math.round(sum/cnt*100):null,dims,blk,resp,total:qs.length};
+}
+const level=p=>p===null?['na','Sin datos','circle-dashed']:p>=80?['ok','Sólido','circle-check']:p>=50?['warn','En desarrollo','triangle-alert']:['bad','Crítico','circle-x'];
+let prof='esc', mode={}, ans={}, unit={};
+function loadAuto(){const s=store.get('dual-auto')||{};Object.keys(Q).forEach(k=>{ans[k]=(s.ans&&s.ans[k])||exFor(k);mode[k]=(s.mode&&s.mode[k])||'ej';unit[k]=(s.unit&&s.unit[k])||''})}
+const saveAuto=()=>store.set('dual-auto',{ans,mode,unit});
+function renderAuto(){
+ loadAuto();
+ $('#autodiagnostico').innerHTML=`
+ <div class="lead"><h2>Autodiagnóstico</h2><p>Instrumento del equipo, basado en las obligaciones del Acuerdo. No es una evaluación oficial.</p></div>
+ <div class="filter" id="prof">${Object.entries(Q).map(([k,v])=>`<button data-k="${k}" aria-pressed="${k===prof}">${ic(v.i)}${v.n}</button>`).join('')}</div>
+ <div class="auto"><div class="card" id="qs"></div><aside class="card panel" id="res" aria-live="polite"></aside></div>`;
+ $('#prof').addEventListener('click',e=>{const b=e.target.closest('button');if(b){prof=b.dataset.k;$$('#prof button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.k===prof));drawQs();drawRes()}});
+ $('#qs').addEventListener('click',e=>{const b=e.target.closest('.seg button');if(!b)return;
+  const i=+b.closest('.seg').dataset.i,v=b.dataset.v;
+  if(mode[prof]==='ej'){ans[prof]={};mode[prof]='real';ans[prof][i]=v;drawQs()}else{ans[prof][i]===v?delete ans[prof][i]:ans[prof][i]=v;
+   $$('button',b.parentNode).forEach(x=>x.setAttribute('aria-pressed',ans[prof][i]===x.dataset.v))}
+  saveAuto();drawBanner();drawRes()});
+ drawQs();drawRes();
+}
+function drawBanner(){const b=$('#ban');if(!b)return;b.style.display=mode[prof]==='ej'?'flex':'none'}
+function drawQs(){
+ const qs=Q[prof].q;let html=`<div class="banner" id="ban">${ic('info')}Datos de ejemplo ficticios. Al responder se borran.</div><div class="ctrl" style="margin:12px 0"><label for="unit">Unidad evaluada<input id="unit" type="text" placeholder="Nombre del plantel o empresa" value="${(unit[prof]||'').replace(/"/g,'&quot;')}"></label></div>`,last='';
+ qs.forEach((q,i)=>{if(q[0]!==last){html+=`<div class="dimh">${ic(DI[q[0]])}${D[q[0]]}</div>`;last=q[0]}
+  html+=`<div class="item"><div class="t"><span>${q[1]}</span>${art(q[2])}${q[3]?`<span class="crit">${ic('lock')}Crítico</span>`:''}</div><div class="seg" data-i="${i}" role="group" aria-label="${q[1]}">${SEG.map(s=>`<button type="button" id="q-${prof}-${i}-${s[0]}" data-v="${s[0]}" aria-pressed="${ans[prof][i]===s[0]}">${s[1]}</button>`).join('')}</div></div>`});
+ $('#qs').innerHTML=html;drawBanner();
+ $('#unit').addEventListener('input',e=>{unit[prof]=e.target.value;saveAuto()});
+}
+function drawRes(){
+ const qs=Q[prof].q,r=scoreOf(qs,ans[prof]);let l=level(r.pct);if(r.blk.length&&l[0]==='ok')l=level(79);
+ const col={ok:'var(--ok)',warn:'var(--warn)',bad:'var(--bad)',na:'var(--ink2)'};
+ $('#res').innerHTML=`
+ <div class="lab">${mode[prof]==='ej'?'Resultado de ejemplo':'Resultado'}</div>
+ <div class="score"><b>${r.pct===null?'--':r.pct+'%'}</b><div class="chips"><span class="status ${l[0]}">${ic(l[2])}${l[1]}</span>${r.blk.length?`<span class="status bad">${ic('lock')}${r.blk.length} ${r.blk.length===1?'crítico':'críticos'}</span>`:''}</div></div>
+ <p class="small muted">${r.resp} de ${r.total} respondidas</p>
+ <div><div class="lab">Por dimensión</div>${Object.entries(r.dims).map(([k,d])=>{const p=d.c?Math.round(d.s/d.c*100):null,lv=level(p);return `<div class="dimbar" data-tip="${D[k]}: ${lv[1]}"><span>${D[k]}</span><div class="tr"><i style="width:${p||0}%;background:${col[lv[0]]}"></i></div><b style="text-align:right">${p===null?'--':p+'%'}</b></div>`}).join('')}</div>
+ <div><div class="lab">Atender primero</div>${r.blk.length?`<ul class="blk">${r.blk.slice(0,6).map(i=>`<li>${ic('lock')}<span>${qs[i][1]} ${art(qs[i][2])}</span></li>`).join('')}</ul>`:'<p class="small muted">Sin críticos pendientes.</p>'}</div>
+ <div class="btnrow"><button class="btn" id="cp">${ic('copy')}Copiar resumen</button><button class="btn" id="clr">${ic('eraser')}Limpiar</button><button class="btn" id="ex">${ic('sparkles')}Ver ejemplo</button></div>
+ <p class="small muted">80 % o más: sólido. 50 a 79 %: en desarrollo. Menos de 50 %: crítico. Un punto crítico pendiente impide la etiqueta de sólido. Regla del equipo.</p>
+ <textarea id="cpt" hidden aria-label="Resumen para copiar" rows="6" style="width:100%"></textarea>`;
+ $('#cp').onclick=async()=>{const t=`Autodiagnóstico Educación Dual: ${Q[prof].n}${unit[prof]?' · '+unit[prof]:''}${mode[prof]==='ej'?' (EJEMPLO)':''}\nPuntaje: ${r.pct===null?'sin datos':r.pct+'%'} (${l[1]})\nRespondidas: ${r.resp}/${r.total}\n`+Object.entries(r.dims).map(([k,d])=>`${D[k]}: ${d.c?Math.round(d.s/d.c*100)+'%':'sin datos'}`).join('\n')+(r.blk.length?`\nCríticos pendientes:\n`+r.blk.map(i=>`- ${qs[i][1]} (art. ${qs[i][2]})`).join('\n'):'');
+  try{await navigator.clipboard.writeText(t);$('#cp').lastChild.textContent='Copiado'}catch(e){const a=$('#cpt');a.hidden=false;a.value=t;a.select()}};
+ $('#clr').onclick=()=>{ans[prof]={};mode[prof]='real';saveAuto();drawQs();drawRes()};
+ $('#ex').onclick=()=>{ans[prof]=exFor(prof);mode[prof]='ej';saveAuto();drawQs();drawRes()};
+}
+
+/* ---------- 7. Fuentes ---------- */
+function renderFuentes(){
+ const ord=['A','PT','MAN','BE','SG22','BB','D25','D26','HM24','HM26','HR26','HC25','HF22','AR24','ES24','ES25','ES26','GG23','CA25','RC26','JE26','PV25','ZT20','MM21','AP24','C18','DR','D23','OA','RZ'];
+ $('#fuentes').innerHTML=`
+ <div class="lead"><h2>Fuentes y grado de lectura</h2><p>Documentos usados en esta página y grado de lectura. El corpus bibliométrico completo está en Evidencia.</p></div>
+ <div class="card">${ord.map(k=>{const s=S[k];return `<div class="ref">${ic(s.i)}<div><p>${s.r}</p><small>${s.t}. ${s.n||''}</small></div><div style="text-align:right"><span class="tag">${s.st}</span><br><a class="small" href="${s.u}" target="_blank" rel="noopener">Abrir</a></div></div>`}).join('')}</div>
+ `;
+}
+
+/* ---------- Tooltip ---------- */
+const tip=$('#tip');
+function tipShow(e,t){tip.textContent=t;tip.style.display='block';const r=tip.getBoundingClientRect();let x=e.clientX+12,y=e.clientY+14;if(x+r.width>innerWidth-8)x=innerWidth-r.width-8;if(y+r.height>innerHeight-8)y=e.clientY-r.height-10;tip.style.left=x+'px';tip.style.top=y+'px'}
+addEventListener('mousemove',e=>{const n=e.target.closest&&e.target.closest('[data-tip]');n?tipShow(e,n.dataset.tip):tip.style.display='none'});
+
+renderResumen();renderActores();renderProcesos();renderSub();renderEv();/* renderAuto(); */renderFuentes();route();
+$('main').addEventListener('click',e=>{const b=e.target.closest('.art[data-art]');if(b)openArt(b.dataset.art)});
+$('#artx').addEventListener('click',()=>$('#artd').close());
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(drawLinks);
+</script>
+</body>
+</html>
