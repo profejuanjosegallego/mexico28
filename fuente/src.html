@@ -379,6 +379,12 @@ footer{max-width:1240px;margin:0 auto;padding:0 20px 32px;color:var(--ink2);font
   .item{grid-template-columns:1fr}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+abbr.sg{text-decoration:underline dotted color-mix(in srgb,currentColor 55%,transparent);text-underline-offset:3px;cursor:help}
+abbr.sg:focus-visible{outline:2px solid var(--g-esc);outline-offset:2px;border-radius:2px}
+.sgx{font-weight:400;color:var(--ink2)}
+#sgtip{position:fixed;z-index:1000;max-width:min(320px,calc(100vw - 16px));padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:400 13px/1.4 var(--body);box-shadow:0 6px 18px rgba(0,0,0,.18);pointer-events:none}
+#sgtip[hidden]{display:none}
+#sgtip b{font-weight:600}
 </style>
 </head>
 <body>
@@ -527,7 +533,9 @@ const ASK=[
   ['Dar apoyos','Salud integral, traslados y alimentación, según necesidades y capacidades.','14 XII'],
   ['Cuidar el ambiente','Da igualdad de trato y evita violencia, acoso y discriminación.','14 XV-XVI']]]];
 const DIR=[['SEMS','Subsecretaría de Educación Media Superior'],['DGETI','Dirección General de Educación Tecnológica Industrial y de Servicios'],['DGETAyCM','Dirección General de Educación Tecnológica Agropecuaria y Ciencias del Mar'],['DGBTED','Dirección General de Bachillerato Tecnológico de Educación y Promoción Deportiva'],['DGCFT','Dirección General de Centros de Formación para el Trabajo'],['Escuelas','Los planteles de esas instituciones']];
-const SIG=[['BTED','Bachillerato Tecnológico en Educación y Promoción Deportiva'],['CBTA','Centro de Bachillerato Tecnológico Agropecuario'],['CBTF','Centro de Bachillerato Tecnológico Forestal'],['CBTIS','Centro de Bachillerato Tecnológico Industrial y de Servicios'],['CCT','Clave del Centro de Trabajo, identifica al plantel'],['CECyTE','Colegios de Estudios Científicos y Tecnológicos'],['CETAC','Centro de Estudios Tecnológicos en Aguas Continentales'],['CETI','Centro de Enseñanza Técnica Industrial'],['CETIS','Centro de Estudios Tecnológicos Industrial y de Servicios'],['CETMAR','Centro de Estudios Tecnológicos del Mar'],['CIFRHS','Comisión Interinstitucional para la Formación de Recursos Humanos para la Salud'],['CMM','Centro Multimodal de Educación Tecnológica del Mar y Aguas Continentales'],['CONALEP','Colegio Nacional de Educación Profesional Técnica'],['CONOCER','Consejo Nacional de Normalización y Certificación de Competencias Laborales'],['COSAC','Coordinación Sectorial Académica, dependiente de la SEMS'],['CURP','Clave Única de Registro de Población'],['DOF','Diario Oficial de la Federación'],['EMS','Educación Media Superior'],['IMSS','Instituto Mexicano del Seguro Social'],['RENAPO','Registro Nacional de Población'],['RFC','Registro Federal de Contribuyentes'],['SEP','Secretaría de Educación Pública']];
+const SIG=[['BTED','Bachillerato Tecnológico en Educación y Promoción Deportiva'],['CBTA','Centro de Bachillerato Tecnológico Agropecuario'],['CBTF','Centro de Bachillerato Tecnológico Forestal'],['CBTIS','Centro de Bachillerato Tecnológico Industrial y de Servicios'],['CCT','Clave del Centro de Trabajo, identifica al plantel'],['CECyTE','Colegios de Estudios Científicos y Tecnológicos de los Estados'],['CETAC','Centro de Estudios Tecnológicos en Aguas Continentales'],['CETI','Centro de Enseñanza Técnica Industrial'],['CETIS','Centro de Estudios Tecnológicos Industrial y de Servicios'],['CETMAR','Centro de Estudios Tecnológicos del Mar'],['CIFRHS','Comisión Interinstitucional para la Formación de Recursos Humanos para la Salud'],['CMM','Centro Multimodal de Educación Tecnológica del Mar y Aguas Continentales'],['CONALEP','Colegio Nacional de Educación Profesional Técnica'],['CONOCER','Consejo Nacional de Normalización y Certificación de Competencias Laborales'],['COSAC','Coordinación Sectorial Académica, dependiente de la SEMS'],['CURP','Clave Única de Registro de Población'],['DOF','Diario Oficial de la Federación'],['EMS','Educación Media Superior'],['IMSS','Instituto Mexicano del Seguro Social'],['RENAPO','Registro Nacional de Población'],['RFC','Registro Federal de Contribuyentes'],['SEP','Secretaría de Educación Pública'],
+ ['AMEXCID','Agencia Mexicana de Cooperación Internacional para el Desarrollo'],['ANFEI','Asociación Nacional de Facultades y Escuelas de Ingeniería'],['BIBB','Instituto Federal de Formación Profesional de Alemania'],['COMIE','Consejo Mexicano de Investigación Educativa'],['GIZ','Agencia Alemana de Cooperación Internacional'],['ODES','Organismos Descentralizados de los Estados'],['STEM','Ciencia, Tecnología, Ingeniería y Matemáticas'],['TIC','Tecnologías de la Información y la Comunicación'],
+ ...DIR.slice(0,5)].sort((a,b)=>a[0].localeCompare(b[0],'es'));
 const WHO=[
  {i:'factory',g:'emp',n:'Empresa o institución pública',door:1,u:'/empresa',a:'Se registra, elige planes, indica puestos y registra instructores.',c:'14 III-IV|14 VII-VIII',p:'Crea su propia cuenta con RFC, nombre, correo, usuario y contraseña. Avanza por 5 módulos en orden.'},
  {i:'school',g:'esc',n:'Escuela',door:1,u:'/escuela',a:'La SEMS la da de alta. Verifica contactos y matricula estudiantes.',c:'12 III|12 IV|12 VI',p:'Entra con la clave de su plantel (CCT) y contraseña. Ve empresas aceptadas, grupos, estudiantes, docentes y seguimiento.'},
@@ -563,7 +571,7 @@ function renderResumen(){
     <p class="small muted">CONALEP, CECyTE y CETI no están en la lista del artículo 2.</p></div>
    <div class="audc"><div class="lab">Participan por convenio ${art('22')}</div><p class="small">Empresas, instituciones públicas y organismos del sector empresarial. Asumen sus compromisos al firmar el Convenio de Colaboración.</p></div>
   </div>
-  <details class="more"><summary>${ic('book-open-check')}Ver todas las siglas de esta página</summary><dl class="sig cols">${SIG.map(d=>`<div><dt>${d[0]}</dt><dd>${d[1]}</dd></div>`).join('')}</dl></details>
+  <details class="more"><summary>${ic('book-open-check')}Ver todas las siglas</summary><p class="small muted" style="margin:8px 0 2px">En toda la página, las siglas subrayadas muestran su significado al pasar el cursor o tocarlas.</p><dl class="sig cols">${SIG.map(d=>`<div><dt>${d[0]}</dt><dd>${d[1]}</dd></div>`).join('')}</dl></details>
  </div>
  ${HOWTO}
  <div class="card"><h3>${ic('sparkles')}La idea central ${art('1')}</h3>
@@ -880,7 +888,7 @@ const SB=[
  {n:'DGETAyCM',f:'Dirección General de Educación Tecnológica Agropecuaria y Ciencias del Mar',pl:'CBTA, CBTF, CETAC, CETMAR y CMM',v:'Directa',s:1,o:1,c:1,p:1,fi:1},
  {n:'DGBTED',f:'Dirección General de Bachillerato Tecnológico de Educación y Promoción Deportiva',pl:'BTED',v:'Directa',s:1,o:1,c:1,p:1,fi:1},
  {n:'DGCFT',f:'Dirección General de Centros de Formación para el Trabajo',pl:'Sin plantel definido en el Acuerdo',v:'Directa',s:0,o:1,c:1,p:0,fi:0},
- {n:'CECyTE',f:'Colegios de Estudios Científicos y Tecnológicos',pl:'Colegios',v:'Por adopción',s:0,o:0,c:.5,p:1,fi:0},
+ {n:'CECyTE',f:'Colegios de Estudios Científicos y Tecnológicos de los Estados',pl:'Colegios',v:'Por adopción',s:0,o:0,c:.5,p:1,fi:0},
  {n:'CONALEP',f:'Colegio Nacional de Educación Profesional Técnica',pl:'Planteles CONALEP',v:'Por adopción',s:0,o:0,c:1,p:1,fi:0},
  {n:'CETI',f:'Centro de Enseñanza Técnica Industrial',pl:'Planteles CETI',v:'Por adopción',s:0,o:0,c:1,p:1,fi:0}
 ];
@@ -1186,6 +1194,61 @@ addEventListener('mousemove',e=>{const n=e.target.closest&&e.target.closest('[da
 renderResumen();renderActores();renderProcesos();renderSub();renderEv();/* renderAuto(); */renderFuentes();route();
 $('main').addEventListener('click',e=>{const b=e.target.closest('.art[data-art]');if(b)openArt(b.dataset.art)});
 $('#artx').addEventListener('click',()=>$('#artd').close());
+/* Siglas: la primera mencion de cada tarjeta muestra el significado; todas se aclaran al pasar el cursor o tocar. */
+const GL=Object.fromEntries(SIG);GL.Conalep=GL.CONALEP;
+const SGR=new RegExp('(?<![A-Za-zÀ-ÿ])('+Object.keys(GL).sort((a,b)=>b.length-a.length).join('|')+')(?![A-Za-zÀ-ÿ])','g');
+const SG_SKIP='script,style,svg,abbr,textarea,select,option,code,dt,.sgx,#sgtip';
+const SG_NOEXP='button,a,th,td,.pill,summary,h1,h2,h3,h4,dl,label,.lab,.tile>b,.rt,header,footer,dialog,#fuentes';
+const SG_SCOPE='details,.card,.tile,.ten,.lead,.note,article,section';
+function sgText(n){
+ const t=n.nodeValue,p=n.parentElement;
+ if(!p||!t||p.closest(SG_SKIP))return;
+ SGR.lastIndex=0;if(!SGR.test(t))return;SGR.lastIndex=0;
+ const noexp=p.closest(SG_NOEXP),inter=p.closest('button,a,summary,label'),f=document.createDocumentFragment();
+ let i=0,m,pend=[];
+ const scope=(p.closest(SG_SCOPE)||p).cloneNode(true);scope.querySelectorAll('dl.sig,table').forEach(e=>e.remove());
+ while((m=SGR.exec(t))){
+  f.append(t.slice(i,m.index));i=m.index+m[0].length;
+  const s=m[1],d=GL[s],a=document.createElement('abbr');
+  a.className='sg';a.textContent=s;a.dataset.d=d;a.setAttribute('aria-label',s+': '+d);
+  if(!inter)a.tabIndex=0;
+  f.append(a);
+  const key=d.split(',')[0];
+  if(!noexp&&t[m.index-1]!=='('&&!scope.textContent.includes(key)&&!pend.includes(key)){
+   const x=document.createElement('span');x.className='sgx';x.textContent=' ('+key+')';f.append(x);pend.push(key);
+  }
+ }
+ f.append(t.slice(i));n.replaceWith(f);
+}
+function siglas(r){
+ const w=document.createTreeWalker(r,NodeFilter.SHOW_TEXT),L=[];
+ while(w.nextNode())L.push(w.currentNode);
+ L.forEach(sgText);
+ r.querySelectorAll('svg text').forEach(e=>{const m=e.textContent.match(SGR);if(m&&!e.querySelector('title')){const k=document.createElementNS('http://www.w3.org/2000/svg','title');k.textContent=m.map(s=>s+': '+GL[s]).join('. ');e.append(k)}});
+}
+const sgo=new MutationObserver(ms=>{sgo.disconnect();
+ ms.forEach(m=>m.addedNodes.forEach(n=>{if(!n.isConnected)return;if(n.nodeType===1)siglas(n);else if(n.nodeType===3)sgText(n)}));
+ sgStart()});
+const sgStart=()=>sgo.observe(document.body,{childList:true,subtree:true});
+const sgtip=document.createElement('div');sgtip.id='sgtip';sgtip.setAttribute('role','tooltip');sgtip.hidden=true;
+const sgHide=()=>{sgtip.hidden=true};
+function sgShow(a){
+ sgtip.innerHTML='';const b=document.createElement('b');b.textContent=a.textContent;sgtip.append(b,' '+a.dataset.d);
+ const host=a.closest('dialog')||document.body;if(sgtip.parentNode!==host)host.append(sgtip);
+ sgtip.hidden=false;
+ const r=a.getBoundingClientRect(),W=document.documentElement.clientWidth,H=innerHeight,w=sgtip.offsetWidth,h=sgtip.offsetHeight;
+ sgtip.style.left=Math.max(8,Math.min(r.left,W-w-8))+'px';
+ sgtip.style.top=(r.bottom+h+10>H?Math.max(8,r.top-h-6):r.bottom+6)+'px';
+}
+document.addEventListener('mouseover',e=>{const a=e.target.closest&&e.target.closest('abbr.sg');if(a)sgShow(a)});
+document.addEventListener('mouseout',e=>{if(e.target.closest&&e.target.closest('abbr.sg')&&document.activeElement!==e.target)sgHide()});
+document.addEventListener('focusin',e=>{if(e.target.matches('abbr.sg'))sgShow(e.target)});
+document.addEventListener('focusout',e=>{if(e.target.matches('abbr.sg'))sgHide()});
+document.addEventListener('click',e=>{const a=e.target.closest('abbr.sg');a?sgShow(a):sgHide()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')sgHide()});
+addEventListener('scroll',sgHide,{passive:true,capture:true});
+siglas(document.body);document.body.append(sgtip);sgStart();
+drawLinks();
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(drawLinks);
 </script>
 </body>
