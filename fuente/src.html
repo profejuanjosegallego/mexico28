@@ -385,6 +385,70 @@ abbr.sg:focus-visible{outline:2px solid var(--g-esc);outline-offset:2px;border-r
 #sgtip{position:fixed;z-index:1000;max-width:min(320px,calc(100vw - 16px));padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:400 13px/1.4 var(--body);box-shadow:0 6px 18px rgba(0,0,0,.18);pointer-events:none}
 #sgtip[hidden]{display:none}
 #sgtip b{font-weight:600}
+/* ---------- Gestión: matriz niveles x funciones ---------- */
+.gm{min-width:940px;table-layout:fixed}
+.gm th,.gm td{border-bottom:0;padding:3px}
+.gm th.gmblk{text-align:center;font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;border-bottom:2px solid var(--line);padding-bottom:5px}
+.gm th.fn{text-align:center;vertical-align:bottom;font-size:12px;line-height:1.2;padding:8px 2px 6px;color:var(--ink)}
+.gm th.fn .ic{display:block;margin:0 auto 4px;color:var(--ink2)}
+.gm th.lv{width:168px}
+.gm td.lvl{text-align:left;vertical-align:middle;padding:6px 10px 6px 12px;border-left:4px solid var(--g);font-size:12.5px;line-height:1.3}
+.gm td.lvl b{display:block;font:700 14px/1.2 var(--display)}
+.gm col.sep{width:8px}
+.gmc{width:100%;min-height:62px;padding:6px 2px;border:1px solid var(--line);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:color-mix(in srgb,var(--ink) var(--h,0%),var(--surface));position:relative}
+.gmc b{font:700 19px/1 var(--display);font-variant-numeric:tabular-nums}
+.gmc.dark{color:var(--surface)}
+.gmc .dots{display:flex;gap:3px;flex-wrap:wrap;justify-content:center}
+.gmc .dots .dot{box-shadow:0 0 0 1.5px var(--surface)}
+.gmc .plus{position:absolute;top:3px;right:4px;font:600 10.5px var(--mono);padding:0 4px;border-radius:5px;background:var(--surface);color:var(--ok);border:1px solid color-mix(in srgb,var(--ok) 50%,var(--line))}
+.gmc.empty{background:transparent;border-style:dashed;color:var(--ink2);font-size:12px}
+.gmc[aria-pressed="true"]{outline:3px solid var(--g-esc);outline-offset:1px}
+.st{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:600;padding:1px 8px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}
+.st.d{background:var(--surface2)}
+.st.a{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 13%,var(--surface))}
+.gmd-h{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;justify-content:space-between}
+.gmd-h p{max-width:640px}
+.gmi{display:flex;flex-direction:column;gap:6px;padding:12px 0;border-top:1px solid var(--line)}
+.gmi:first-of-type{border-top:0}
+.gmi .meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.gmi>p{font-size:15px;max-width:820px}
+.gmi .fix{font-size:13px;color:var(--ink2);border-left:3px solid var(--warn);padding:2px 0 2px 9px;max-width:820px}
+.gmi .fix.a{border-left-color:var(--ok)}
+.gmhl{display:flex;gap:10px;align-items:flex-start;margin-top:14px;padding:12px 14px;border-radius:8px;border:1px solid var(--warn);border-left-width:5px;background:color-mix(in srgb,var(--warn) 12%,var(--surface));font-size:14.5px;max-width:100%}
+.gmhl>.ic{color:var(--warn);margin-top:2px}
+.gmhow{display:grid;grid-template-columns:250px minmax(0,1fr);gap:18px 28px;align-items:start;margin:12px 0 16px;padding:16px;border-radius:8px;background:var(--surface2)}
+.gmhow-ex{display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px}
+.gmex{width:150px;min-height:100px;margin:18px 0 8px;cursor:default}
+.gmex b{font-size:30px}
+.gmex .dot{width:11px;height:11px}
+.cn{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--ink);color:var(--surface);font:700 12px/1 var(--body);font-style:normal;flex:none}
+.cn .ic{width:13px;height:13px}
+.gmex .cn{position:absolute}
+.gmex .c1{left:-30px;top:22px}
+.gmex .c2{left:-30px;bottom:18px}
+.gmex .c3{right:-30px;top:2px}
+.gmex .c1:after,.gmex .c2:after{content:"";position:absolute;left:22px;top:10px;width:46px;border-top:1.5px dashed var(--ink)}
+.gmex .c3:before{content:"";position:absolute;right:22px;top:10px;width:14px;border-top:1.5px dashed var(--ink)}
+.gmscale{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--ink2);margin-top:6px}
+.gmscale i{display:inline-block;width:18px;height:14px;border-radius:4px;border:1px solid var(--line);background:color-mix(in srgb,var(--ink) var(--h),var(--surface))}
+.gmscale i.nil{width:auto;height:auto;padding:0 6px;font-style:normal;background:transparent;border-style:dashed}
+.gmhow-l{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;font-size:14px}
+.gmhow-l li{display:flex;gap:10px;align-items:flex-start}
+@media (max-width:720px){.gmhow{grid-template-columns:minmax(0,1fr)}}
+.gmempty{padding:14px;border:1px dashed var(--line);border-radius:8px;color:var(--ink2);font-size:14px}
+.gml{border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.gml+.gml{margin-top:10px}
+.gml>summary{list-style:none;margin:0;padding:14px 16px;display:flex;gap:10px;align-items:center;font-size:15px;color:var(--ink);border-left:4px solid var(--g);border-radius:var(--r)}
+.gml>summary::-webkit-details-marker{display:none}
+.gml>summary b{font:700 16px var(--display)}
+.gml>summary .chev{margin-left:auto;transition:transform .15s}
+.gml[open]>summary .chev{transform:rotate(90deg)}
+.gml .body{padding:0 16px 14px}
+.gml h4{margin:16px 0 2px;font-size:13px;display:flex;gap:6px;align-items:center}
+.gml h4 .blkn{font-weight:400;color:var(--ink2)}
+.acs{font:500 11.5px/1.3 var(--mono);color:var(--ink2);background:var(--surface2);padding:1px 6px;border-radius:4px;white-space:nowrap;border:0;cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px}
+.acs:hover{background:var(--ink);color:var(--surface)}
+@media (max-width:720px){.gmi>p{font-size:14.5px}.gml>summary{flex-wrap:wrap}}
 </style>
 </head>
 <body>
@@ -400,6 +464,7 @@ abbr.sg:focus-visible{outline:2px solid var(--g-esc);outline-offset:2px;border-r
   <section class="view" id="resumen"></section>
   <section class="view" id="actores" hidden></section>
   <section class="view" id="procesos" hidden></section>
+  <section class="view" id="gestion" hidden></section>
   <section class="view" id="subsistemas" hidden></section>
   <section class="view" id="evidencia" hidden></section>
   <section class="view" id="autodiagnostico" hidden aria-hidden="true"></section>
@@ -459,6 +524,7 @@ const S={
  PT:{l:'Portal SEMS',t:'Sitio oficial',st:'Páginas públicas',i:'monitor',r:'SEMS. Registro Empresas Dual. Fecha de análisis: 1 de noviembre de 2026.',u:'https://empresas.educaciondual.sems.gob.mx/',n:'Las listas de empresas, escuelas y subsistemas piden inicio de sesión.'},
  BE:{l:'Convocatoria de beca 2023',t:'Documento oficial, marco anterior',st:'Texto completo',i:'stamp',r:'SEP-SEMS (2023). Convocatoria 2023. Beca de Estímulo para Educación Dual. Programa de Becas Elisa Acuña.',u:'https://dgetaycm.sep.gob.mx/storage/recursos/2023/02/KpbulUJxm8-Anexo%202%20Conv.%20ED.pdf',n:'Previa al Acuerdo 28/11/25. Se cita porque exige estar activo en la Plataforma Académica.'},
  BB:{l:'CONALEP 2026',t:'Presentación',st:'Texto completo',i:'presentation',r:'Huitrón Miranda, M. E. (2026, 30 de junio). Aplicación del modelo dual en economías con alta informalidad. Acciones en el CONALEP, México. Webinar BIBB.',u:'https://www.bibb.de/dokumente/pdf/202606_Alianza-webinar_CONALEP_Huitr%c3%b3n.pdf'},
+ EG:{l:'Matriz de gestión del equipo',t:'Documento de trabajo interno',st:'Matriz completa',i:'layers',r:'Equipo del proyecto (2026). Estructura de gestión del Sistema de Educación Dual de México según la normativa vigente. Matriz de niveles por funciones de gestión con citas del Acuerdo 28/11/25. Base de la pestaña Gestión.',n:'Sin publicar.'},
  RZ:{l:'La Razón 2025',t:'Prensa',st:'Fragmento de búsqueda',i:'megaphone',r:'La Razón (19 de febrero de 2025). Mario Delgado convoca a empresas globales a trabajar para alinear el sector educativo con las necesidades de la economía mexicana.',u:'https://www.razon.com.mx/mexico/2025/02/19/mario-delgado-convoca-a-empresas-globales-a-trabajar-para-alinear-el-sector-educativo-con-las-necesidades-de-la-economia-mexicana/',n:'Declaración, no estadística oficial.'}
 };
 const src=k=>`<a class="src" href="#fuentes" data-tip="${S[k].t}. ${S[k].st}.">${S[k].l}</a>`;
@@ -471,7 +537,7 @@ const gtag=g=>`<span class="tag" style="${gv(g)}"><span class="dot"></span>${G[g
 
 /* ---------- Pestañas ---------- */
 /* Autodiagnóstico oculto: para reactivarlo, agregar su pestaña aquí y descomentar renderAuto() al final. */
-const TABS=[['resumen','Resumen del Acuerdo','file-text'],['actores','Actores','users'],['procesos','Procesos','route'],['subsistemas','Subsistemas','layers'],['evidencia','Evidencia','search'],['fuentes','Fuentes','library']];
+const TABS=[['resumen','Resumen del Acuerdo','file-text'],['actores','Actores','users'],['procesos','Procesos','route'],['gestion','Gestión','scale'],['subsistemas','Subsistemas','layers'],['evidencia','Evidencia','search'],['fuentes','Fuentes','library']];
 $('#tabs').innerHTML=TABS.map(t=>`<a href="#${t[0]}" data-t="${t[0]}">${ic(t[2])}${t[1]}</a>`).join('');
 function route(){
   const h=location.hash.slice(1), v=TABS.some(t=>t[0]===h)?h:'resumen';
@@ -534,7 +600,7 @@ const ASK=[
   ['Cuidar el ambiente','Da igualdad de trato y evita violencia, acoso y discriminación.','14 XV-XVI']]]];
 const DIR=[['SEMS','Subsecretaría de Educación Media Superior'],['DGETI','Dirección General de Educación Tecnológica Industrial y de Servicios'],['DGETAyCM','Dirección General de Educación Tecnológica Agropecuaria y Ciencias del Mar'],['DGBTED','Dirección General de Bachillerato Tecnológico de Educación y Promoción Deportiva'],['DGCFT','Dirección General de Centros de Formación para el Trabajo'],['Escuelas','Los planteles de esas instituciones']];
 const SIG=[['BTED','Bachillerato Tecnológico en Educación y Promoción Deportiva'],['CBTA','Centro de Bachillerato Tecnológico Agropecuario'],['CBTF','Centro de Bachillerato Tecnológico Forestal'],['CBTIS','Centro de Bachillerato Tecnológico Industrial y de Servicios'],['CCT','Clave del Centro de Trabajo, identifica al plantel'],['CECyTE','Colegios de Estudios Científicos y Tecnológicos de los Estados'],['CETAC','Centro de Estudios Tecnológicos en Aguas Continentales'],['CETI','Centro de Enseñanza Técnica Industrial'],['CETIS','Centro de Estudios Tecnológicos Industrial y de Servicios'],['CETMAR','Centro de Estudios Tecnológicos del Mar'],['CIFRHS','Comisión Interinstitucional para la Formación de Recursos Humanos para la Salud'],['CMM','Centro Multimodal de Educación Tecnológica del Mar y Aguas Continentales'],['CONALEP','Colegio Nacional de Educación Profesional Técnica'],['CONOCER','Consejo Nacional de Normalización y Certificación de Competencias Laborales'],['COSAC','Coordinación Sectorial Académica, dependiente de la SEMS'],['CURP','Clave Única de Registro de Población'],['DOF','Diario Oficial de la Federación'],['EMS','Educación Media Superior'],['IMSS','Instituto Mexicano del Seguro Social'],['RENAPO','Registro Nacional de Población'],['RFC','Registro Federal de Contribuyentes'],['SEP','Secretaría de Educación Pública'],
- ['AMEXCID','Agencia Mexicana de Cooperación Internacional para el Desarrollo'],['ANFEI','Asociación Nacional de Facultades y Escuelas de Ingeniería'],['BIBB','Instituto Federal de Formación Profesional de Alemania'],['COMIE','Consejo Mexicano de Investigación Educativa'],['GIZ','Agencia Alemana de Cooperación Internacional'],['ODES','Organismos Descentralizados de los Estados'],['STEM','Ciencia, Tecnología, Ingeniería y Matemáticas'],['TIC','Tecnologías de la Información y la Comunicación'],
+ ['AMEXCID','Agencia Mexicana de Cooperación Internacional para el Desarrollo'],['ASF','Auditoría Superior de la Federación'],['ANFEI','Asociación Nacional de Facultades y Escuelas de Ingeniería'],['BIBB','Instituto Federal de Formación Profesional de Alemania'],['COMIE','Consejo Mexicano de Investigación Educativa'],['GIZ','Agencia Alemana de Cooperación Internacional'],['ODES','Organismos Descentralizados de los Estados'],['STEM','Ciencia, Tecnología, Ingeniería y Matemáticas'],['TIC','Tecnologías de la Información y la Comunicación'],
  ...DIR.slice(0,5)].sort((a,b)=>a[0].localeCompare(b[0],'es'));
 const WHO=[
  {i:'factory',g:'emp',n:'Empresa o institución pública',door:1,u:'/empresa',a:'Se registra, elige planes, indica puestos y registra instructores.',c:'14 III-IV|14 VII-VIII',p:'Crea su propia cuenta con RFC, nombre, correo, usuario y contraseña. Avanza por 5 módulos en orden.'},
@@ -1179,11 +1245,152 @@ function drawRes(){
 
 /* ---------- 7. Fuentes ---------- */
 function renderFuentes(){
- const ord=['A','PT','MAN','BE','SG22','BB','D25','D26','HM24','HM26','HR26','HC25','HF22','AR24','ES24','ES25','ES26','GG23','CA25','RC26','JE26','PV25','ZT20','MM21','AP24','C18','DR','D23','OA','RZ'];
+ const ord=['A','EG','PT','MAN','BE','SG22','BB','D25','D26','HM24','HM26','HR26','HC25','HF22','AR24','ES24','ES25','ES26','GG23','CA25','RC26','JE26','PV25','ZT20','MM21','AP24','C18','DR','D23','OA','RZ'];
  $('#fuentes').innerHTML=`
  <div class="lead"><h2>Fuentes y grado de lectura</h2><p>Documentos usados en esta página y grado de lectura. El corpus bibliométrico completo está en Evidencia.</p></div>
- <div class="card">${ord.map(k=>{const s=S[k];return `<div class="ref">${ic(s.i)}<div><p>${s.r}</p><small>${s.t}. ${s.n||''}</small></div><div style="text-align:right"><span class="tag">${s.st}</span><br><a class="small" href="${s.u}" target="_blank" rel="noopener">Abrir</a></div></div>`}).join('')}</div>
+ <div class="card">${ord.map(k=>{const s=S[k];return `<div class="ref">${ic(s.i)}<div><p>${s.r}</p><small>${s.t}. ${s.n||''}</small></div><div style="text-align:right"><span class="tag">${s.st}</span>${s.u?`<br><a class="small" href="${s.u}" target="_blank" rel="noopener">Abrir</a>`:''}</div></div>`}).join('')}</div>
  `;
+}
+
+/* ---------- Gestión: niveles x funciones (matriz de trabajo del equipo, completada) ---------- */
+const GB=[['Rectores ex ante','Antes de operar',4],['Procesos de ejecución','Durante la operación',5],['Rectores ex post','Después: evaluar',2]];
+const GF=[
+ ['inf','Información','database','Registrar datos, informar y poner los sistemas a disposición.'],
+ ['nor','Normalización','scale','Fijar reglas, planes, perfiles y requisitos.'],
+ ['pla','Planificación','target','Decidir qué se aprende, dónde y cuándo.'],
+ ['art','Articulación','link','Vincular a instituciones, empresas y otros actores.'],
+ ['adm','Administración','briefcase','Operar convenios, selección, matrícula, cursos y constancias.'],
+ ['fin','Financiamiento','wallet','Cubrir becas, seguros y apoyos al estudiantado.'],
+ ['sup','Supervisión','shield-check','Verificar que se cumplan las reglas y los convenios.'],
+ ['mon','Monitoreo','gauge','Acompañar y dar seguimiento continuo.'],
+ ['ctl','Control','lock','Corregir o terminar lo que incumple.'],
+ ['res','Evaluación de resultados','clipboard-check','Medir lo logrado por estudiantes y planteles.'],
+ ['imp','Evaluación de impactos','chart-column','Valorar los efectos del modelo en el sistema.']];
+const GP=[
+ [3,'Tercer piso','Rectoría','Comité Directivo, SEP y SEMS','gob'],
+ [2,'Segundo piso','Instancias intermedias','Subsistemas','sub'],
+ [1,'Primer piso','Ejecución','Escuela, espacio laboral, estudiantes e instancias de apoyo','esc']];
+const GST={d:['Del documento base','file-text'],a:['Añadido desde el Acuerdo','circle-check']};
+/* [piso, función, grupo de actor, cita, estado d|c|a, texto, nota] ; cita 'AS' o 'AS n' = Artículo Segundo del Acuerdo */
+const GM=[
+ [3,'inf','gob','30','d','La SEP, a través de la SEMS, pone a disposición el Sistema de Información de la Educación Dual: la Plataforma Académica y la Plataforma de Espacios de Formación Laboral.'],
+ [3,'nor','gob','3','d','La SEP promueve que las autoridades educativas de los estados, los organismos descentralizados y las instituciones autónomas que imparten EMS adopten estos Lineamientos.'],
+ [3,'nor','gob','20 III','d','El Comité Directivo opina, con base en estudios de factibilidad, prospectiva y pertinencia que le presentan los Subsistemas, si conviene diseñar, reorientar o evaluar planes duales.'],
+ [3,'nor','gob','7','a','La SEMS aprueba los planes duales que le proponen los Subsistemas, y se difunden en el Sistema de Información.'],
+ [3,'nor','gob','5 IX','a','La COSAC fija, con cada Subsistema, los requisitos de acreditación para emitir la Doble Certificación.'],
+ [3,'art','gob','3','d','La SEMS establece la colaboración necesaria con instituciones y organismos públicos, sociales y privados, nacionales y extranjeros, para impulsar la Educación Dual.'],
+ [3,'art','gob','17','d','La SEMS se vincula con gobiernos de otras naciones y organismos internacionales, con la Secretaría de Relaciones Exteriores a través de la AMEXCID.'],
+ [3,'art','gob','20 II','d','El Comité Directivo coordina la implementación y consolidación de la Educación Dual.'],
+ [3,'adm','gob','AS','a','La persona titular de la SEMS da su anuencia previa a los Convenios de Colaboración que firman los Subsistemas.'],
+ [3,'ctl','gob','25','a','La SEMS puede indicar a los Subsistemas que terminen de forma anticipada los Convenios de Colaboración que no cumplan los Lineamientos.'],
+ [3,'imp','gob','20 V','d','El Comité Directivo evalúa la implementación de la Educación Dual de manera científica.'],
+ [3,'imp','gob','20 X','a','El Comité Directivo fomenta programas de investigación científica sobre la implementación de la Educación Dual.'],
+
+ [2,'inf','sub','AS 3','d','Las personas titulares de DGETI, DGETAyCM y DGBTED informan cada trimestre a la persona titular de la SEMS sobre el ejercicio de su facultad delegada de firmar convenios.'],
+ [2,'inf','sub','13 VIII','d','El Subsistema registra en el Sistema de Información su oferta de actualización y capacitación para los Actores de la Educación Dual.'],
+ [2,'inf','sub','13 X','d','El Subsistema orienta y asesora a las Escuelas sobre los servicios de actualización y capacitación.'],
+ [2,'inf','sub','13 XI','d','El Subsistema debe estar dado de alta en la Plataforma Académica y en la Plataforma de Espacios de Formación Laboral.'],
+ [2,'inf','sub','13 XIX','d','El Subsistema informa cada trimestre a la SEMS sus acciones de implementación, fortalecimiento y seguimiento, con un reporte de Convenios de Colaboración y de Aprendizaje.'],
+ [2,'inf','sub','24','d','El Responsable de Educación Dual registra los Convenios de Colaboración en la Plataforma de Espacios de Formación Laboral, en un máximo de 30 días hábiles desde su firma.'],
+ [2,'nor','sub','13 I','d','El Subsistema pide opinión al Comité Directivo para diseñar, reorientar o evaluar planes duales, con los estudios que lo justifiquen.'],
+ [2,'nor','sub','13 II','d','El Subsistema diseña los planes y programas de Educación Dual.'],
+ [2,'adm','sub','AS','d','Los titulares de los Subsistemas firman los Convenios de Colaboración por delegación, con anuencia previa de la SEMS y opinión favorable de la Unidad de Asuntos Jurídicos y Regulación.'],
+ [2,'adm','sub','13 XIII','d','El Subsistema recibe, en la Plataforma de Espacios de Formación Laboral, las solicitudes de Empresas o Instituciones Públicas y valida su registro y vinculación con las Escuelas.'],
+ [2,'adm','sub','13 XIV','d','El Subsistema celebra, con anuencia de la SEMS, el Convenio de Colaboración con la Empresa, Institución Pública u Organismo, y lo remite a la SEMS en 30 días hábiles.'],
+ [2,'adm','sub','13 XII','d','El Subsistema acompaña y supervisa a las Escuelas al matricular estudiantes y al registrar sus Convenios de Aprendizaje, a través del Responsable de Educación Dual.'],
+ [2,'adm','sub','13 VI-VII','a','El Subsistema obtiene la validación de la SEMS para sus cursos de actualización y capacitación, y los imparte.'],
+ [2,'adm','sub','13 IX','d','El Subsistema expide a los Actores la documentación que acredita sus cursos.'],
+ [2,'fin','sub','13 XVIII','a','El Subsistema garantiza, mediante el Convenio de Aprendizaje, que cada estudiante tenga seguridad médica ampliada en la empresa y en sus traslados.'],
+ [2,'fin','sub','13 XXI','a','El Subsistema garantiza a las y los estudiantes el acceso a la beca correspondiente.'],
+ [2,'sup','sub','13 V','d','El Subsistema supervisa que Escuelas, Empresas e Instituciones Públicas cumplan los Lineamientos para suscribir el Convenio de Colaboración.'],
+ [2,'sup','sub','13 XV','d','El Subsistema da seguimiento y verifica el cumplimiento de los Convenios de Colaboración.'],
+ [2,'sup','sub','13 XVI','d','El Subsistema verifica, a través de los Responsables de Educación Dual y de vinculación, que los Convenios de Aprendizaje se apeguen a los Lineamientos.'],
+ [2,'mon','sub','13 IV','d','El Subsistema brinda asesoría técnica, seguimiento y apoyo a sus Escuelas.'],
+ [2,'res','sub','13 XVII','d','El Subsistema lleva al día el registro de evaluaciones de cada estudiante para seguir su Trayectoria curricular combinada, articulado con el Sistema de Información.'],
+
+ [1,'inf','esc','12 III','d','La Escuela debe estar dada de alta por la SEMS en la Plataforma de Espacios de Formación Laboral.'],
+ [1,'inf','esc','12 IV','d','La Escuela verifica, en la plataforma, los datos de contacto de cada Empresa o Institución Pública.'],
+ [1,'inf','esc','12 VI','d','La Escuela matricula a cada estudiante con su Convenio de Aprendizaje en la Plataforma de Espacios de Formación Laboral y en la Plataforma Académica.'],
+ [1,'inf','esc','12 V','a','La Escuela entrega al Responsable de Educación Dual un informe mensual de implementación, fortalecimiento y seguimiento.'],
+ [1,'inf','esc','28','a','El Responsable de vinculación registra cada Convenio de Aprendizaje en el Sistema de Información, en un máximo de 30 días hábiles desde su firma.'],
+ [1,'inf','emp','14 III','d','La Empresa o Institución Pública se registra en la Plataforma de Espacios de Formación Laboral.'],
+ [1,'inf','emp','14 VII','d','La Empresa o Institución Pública indica en la plataforma sus Puestos de aprendizaje para armar los Planes de rotación.'],
+ [1,'inf','emp','14 VIII','d','La Empresa o Institución Pública registra a sus Instructores en la plataforma.'],
+ [1,'nor','emp','14 V','d','La Empresa o Institución Pública define el perfil de estudiantes que requiere para sus Puestos de aprendizaje.'],
+ [1,'nor','apo','15 I','d','Las Instancias Evaluadoras y Certificadoras orientan a Empresas, Organismos e Instituciones Públicas para evaluar a sus Instructores.'],
+ [1,'pla','esc','9','d','Las Escuelas, en coordinación con las Empresas o Instituciones Públicas, pueden llevar a cabo la Planificación de la Educación Dual, con la metodología de la SEMS.'],
+ [1,'art','esc','12 I','d','La Escuela promueve la vinculación con Empresas e Instituciones Públicas.'],
+ [1,'adm','est','11 VI','d','La o el estudiante manifiesta su preferencia por la Empresa o Institución Pública donde cursará la Educación Dual.'],
+ [1,'adm','emp','14 II','d','La Empresa o Institución Pública firma el Convenio de Colaboración a través de su representante legal.'],
+ [1,'adm','emp','14 IV','d','La Empresa o Institución Pública elige en el Sistema de Información los planes duales en los que quiere participar.'],
+ [1,'adm','emp','14 IX','d','La Empresa o Institución Pública participa con la Escuela en la selección de estudiantes y en la formalización del Convenio de Aprendizaje.'],
+ [1,'adm','apo','15 II','d','Las Instancias Evaluadoras y Certificadoras orientan a los Instructores para certificarse ante el CONOCER en el Estándar de Competencia Laboral que corresponda.'],
+ [1,'fin','esc','12 XIII','a','La Escuela verifica que cada estudiante cuente con Seguro Médico Facultativo.'],
+ [1,'fin','emp','14 XI','a','La Empresa o Institución Pública contrata un seguro médico ampliado que cubre accidentes en el espacio laboral y en los traslados.'],
+ [1,'fin','emp','14 XII','a','La Empresa o Institución Pública da programas de salud integral, facilita los traslados y apoya la alimentación, según sus capacidades.'],
+ [1,'sup','esc','12 IX','d','La Escuela implementa mecanismos de supervisión de la Educación Dual que imparte.','La misma fracción aparece en Supervisión, Monitoreo y Evaluación de resultados porque reúne las tres tareas.'],
+ [1,'mon','esc','12 IX','d','La Escuela implementa mecanismos de seguimiento de la Educación Dual que imparte.','Misma fracción que en Supervisión y Evaluación de resultados.'],
+ [1,'mon','apo','16','a','Los Organismos del Sector Empresarial piden a la SEMS acceso a la plataforma para facilitar y monitorear la participación de sus empresas afiliadas.'],
+ [1,'res','esc','12 IX','d','La Escuela implementa mecanismos de evaluación de la Educación Dual que imparte.','Misma fracción que en Supervisión y Monitoreo.']
+];
+const ACS_T=`<h3>Acuerdo 28/11/25, Artículo Segundo</h3><p class="small muted">Está en el cuerpo del Acuerdo, antes de los Lineamientos. Delega la firma de los convenios de colaboración.</p><blockquote>Se delega a las personas servidoras públicas titulares de la Dirección General de Educación Tecnológica Industrial y de Servicios, la Dirección General de Educación Tecnológica, Agropecuaria y Ciencias del Mar y la Dirección General de Bachillerato Tecnológico de Educación y Promoción Deportiva la facultad para suscribir los convenios de colaboración a que refieren los Lineamientos Generales para la impartición del tipo medio superior mediante la opción de educación dual, previa anuencia de la persona titular de la Subsecretaría de Educación Media Superior y opinión favorable de la Unidad de Asuntos Jurídicos y Regulación.</blockquote><blockquote>Lo anterior sin perjuicio de su ejercicio directo por parte de la persona titular de la Secretaría de Educación Pública.</blockquote><blockquote>Las personas titulares de [esas tres Direcciones Generales] deberán:</blockquote><blockquote><b>1)</b> Ejercer directamente la facultad delegada con estricto apego a los procedimientos aplicables y dentro del ámbito de su respectiva competencia, bajo los principios de legalidad, honradez, lealtad, imparcialidad y eficiencia.</blockquote><blockquote><b>2)</b> Actuar con estricta observancia de los ordenamientos legales aplicables, salvaguardando en todo momento los intereses generales y particulares de la Administración Pública Federal, y</blockquote><blockquote><b>3)</b> Informar trimestralmente a la persona titular de la Subsecretaría de Educación Media Superior sobre el ejercicio de esta facultad, información que a su vez dicho titular comunicará a la persona titular de la Secretaría de Educación Pública.</blockquote>`;
+const cite=c=>c.startsWith('AS')?`<button type="button" class="acs" data-tip="Clic para leer el texto oficial">Acuerdo, Art. Segundo${c.length>2?', num. '+c.slice(3):''}</button>`:art(c);
+const gmAt=(p,f)=>GM.filter(x=>x[0]===p&&x[1]===f);
+let gsel=[2,'adm'];
+const gItem=x=>`<div class="gmi"><div class="meta">${gtag(x[2])}${cite(x[3])}<span class="st ${x[4]}">${ic(GST[x[4]][1])}${GST[x[4]][0]}</span></div><p>${x[5]}</p>${x[6]?`<div class="fix ${x[4]}">${x[6]}</div>`:''}</div>`;
+function renderGestion(){
+ const cnt=k=>GM.filter(x=>x[4]===k).length;
+ const filled=new Set(GM.map(x=>x[0]+x[1])).size, empty=GP.length*GF.length-filled;
+ const max=Math.max(...GP.flatMap(p=>GF.map(f=>gmAt(p[0],f[0]).length)));
+ let fi=0;
+ const head1=GB.map((b,i)=>`${i?'<th></th>':''}<th class="gmblk" colspan="${b[2]}">${b[0]}<div class="small muted" style="text-transform:none;letter-spacing:0;font-weight:400">${b[1]}</div></th>`).join('');
+ const head2=GB.map((b,i)=>{const fs=GF.slice(fi,fi+b[2]);fi+=b[2];return (i?'<th></th>':'')+fs.map(f=>`<th class="fn" data-tip="${f[3]}">${ic(f[2])}${f[1]}</th>`).join('')}).join('');
+ const cols=`<col style="width:168px">${GB.map((b,i)=>(i?'<col class="sep">':'')+'<col>'.repeat(b[2])).join('')}`;
+ const row=p=>{fi=0;return `<tr style="${gv(p[4])}"><td class="lvl"><b>${p[1]}</b>${p[2]}<div class="small muted">${p[3]}</div></td>${GB.map((b,i)=>{const fs=GF.slice(fi,fi+b[2]);fi+=b[2];return (i?'<td></td>':'')+fs.map(f=>{const it=gmAt(p[0],f[0]),n=it.length,ad=it.filter(x=>x[4]==='a').length;
+  const gs=[...new Set(it.map(x=>x[2]))];const h=n?Math.round(8+n/max*52):0;
+  const lab=`${p[1]}, ${f[1]}: ${n?n+(n>1?' disposiciones':' disposición'):'sin disposiciones'}${ad?`, ${ad} añadida${ad>1?'s':''}`:''}`;
+  return `<td><button type="button" class="gmc${n?'':' empty'}${h>38?' dark':''}" style="--h:${h}%" data-p="${p[0]}" data-f="${f[0]}" aria-pressed="false" aria-label="${lab}" data-tip="${lab}">${n?`<b>${n}</b><span class="dots">${gs.map(g=>`<span class="dot" style="${gv(g)}"></span>`).join('')}</span>${ad?`<span class="plus">+${ad}</span>`:''}`:'—'}</button></td>`}).join('')}).join('')}</tr>`};
+ $('#gestion').innerHTML=`
+ <div class="lead"><h2>¿Quién gestiona qué?</h2><p>Las disposiciones del Acuerdo ordenadas en tres niveles de gobierno y once funciones de gestión. Parte de la matriz de trabajo del equipo, completada con artículos del Acuerdo en las celdas vacías.</p></div>
+ <div class="origin">${Object.entries(GST).map(([k,v])=>`<span><span class="st ${k}">${ic(v[1])}${v[0]}</span></span>`).join('')}</div>
+ ${HOWTO}
+ <div class="tiles">
+  <div class="tile">${ic('layers')}<b>3 × 11</b><span>niveles por funciones de gestión</span></div>
+  <div class="tile">${ic('file-text')}<b>${GM.length}</b><span>disposiciones ubicadas en la matriz</span></div>
+  <div class="tile">${ic('circle-check')}<b>${cnt('a')}</b><span>añadidas desde el Acuerdo para llenar huecos</span></div>
+  <div class="tile">${ic('circle-minus')}<b>${empty}</b><span>celdas sin ninguna disposición en el Acuerdo</span></div>
+ </div>
+ <div class="card"><h3>${ic('map')}Mapa de gestión</h3>
+  <p class="small muted" style="margin:4px 0 0">Cada casilla cruza un nivel (fila) con una función (columna).</p>
+  ${(()=>{const ex=gmAt(1,'inf'),n=ex.length,ad=ex.filter(x=>x[4]==='a').length,gs=[...new Set(ex.map(x=>x[2]))],h=Math.round(8+n/max*52);
+  return `<div class="gmhow"><div class="gmhow-ex"><div class="lab">Cómo leer el mapa · ejemplo</div><div class="small muted">Primer piso × Información</div>
+   <div class="gmc gmex${h>38?' dark':''}" style="--h:${h}%"><b>${n}</b><span class="dots">${gs.map(g=>`<span class="dot" style="${gv(g)}"></span>`).join('')}</span><span class="plus">+${ad}</span><i class="cn c1">1</i><i class="cn c2">2</i><i class="cn c3">3</i></div>
+   <div class="gmscale"><span>Menos</span>${[8,22,36,50,60].map(v=>`<i style="--h:${v}%"></i>`).join('')}<span>Más</span></div>
+   <div class="gmscale"><i class="nil">—</i><span>El Acuerdo no asigna nada en ese cruce</span></div></div>
+  <ol class="gmhow-l">
+   <li><span class="cn">1</span><div><b>El número dice cuántas.</b> Son las disposiciones del Acuerdo que caen en ese cruce. Aquí hay ${n}. Cuantas más hay, más oscuro es el fondo.</div></li>
+   <li><span class="cn">2</span><div><b>Los puntos dicen quién.</b> Hay un punto por cada actor que tiene esas disposiciones. Aquí son ${gs.map(g=>G[g].n).join(' y ')}.<div class="legendline" style="margin-top:6px">${['gob','sub','esc','emp','est','apo'].map(g=>`<span><span class="dot" style="${gv(g)}"></span>${G[g].n}</span>`).join('')}</div></div></li>
+   <li><span class="cn">3</span><div><b>La etiqueta <span class="st a" style="font-size:10.5px;padding:0 5px">+n</span> dice cuántas añadimos.</b> Son disposiciones que no venían en la matriz del equipo y se tomaron del Acuerdo. Aquí, ${ad} de las ${n}. Si no hay etiqueta, todo viene de la matriz.</div></li>
+   <li><span class="cn">${ic('arrow-right')}</span><div><b>Haz clic en una casilla</b> para leer abajo cada disposición, con su actor y su artículo.</div></li>
+  </ol></div>`})()}
+  <div class="scroll"><table class="gm"><colgroup>${cols}</colgroup><thead><tr><th class="lv"></th>${head1}</tr><tr><th></th>${head2}</tr></thead><tbody>${GP.map(row).join('')}</tbody></table></div>
+  <div class="gmhl">${ic('triangle-alert')}<div><b>Celdas que siguen vacías.</b> El Acuerdo no asigna planificación ni articulación al Subsistema, evaluación de resultados a la rectoría, ni evaluación de impactos a los pisos primero y segundo. Son huecos de la norma, no de la matriz.</div></div>
+ </div>
+ <div class="card" id="gmd" aria-live="polite"></div>
+ <div class="card"><h3>${ic('book-open-check')}Leer todo por nivel</h3>
+  <p class="small muted" style="margin:4px 0 12px">La misma información en forma de lista, para leerla completa o imprimirla.</p>
+  ${GP.map((p,i)=>`<details class="gml" style="${gv(p[4])}"${i?'':' open'}><summary>${ic(G[p[4]].i)}<b>${p[1]}</b><span class="muted">${p[2]} · ${p[3]}</span><span class="small muted">${GM.filter(x=>x[0]===p[0]).length} disposiciones</span>${ic('arrow-right','chev')}</summary><div class="body">${GF.map(f=>{const it=gmAt(p[0],f[0]);if(!it.length)return '';const b=GB[GF.indexOf(f)<4?0:GF.indexOf(f)<9?1:2];return `<h4>${ic(f[2])}${f[1]} <span class="blkn">· ${b[0]}</span></h4>${it.map(gItem).join('')}`}).join('')}</div></details>`).join('')}
+ </div>
+</div>`;
+ $$('#gestion .gmc').forEach(b=>b.addEventListener('click',()=>{gsel=[+b.dataset.p,b.dataset.f];showGest(true)}));
+ showGest(false);
+}
+function showGest(scroll){
+ const [p,f]=gsel,P_=GP.find(x=>x[0]===p),F_=GF.find(x=>x[0]===f),it=gmAt(p,f);
+ $$('#gestion .gmc').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.p===p&&b.dataset.f===f)));
+ const d=$('#gmd');
+ d.innerHTML=`<div class="gmd-h"><h3>${ic(F_[2])}${P_[1]} · ${F_[1]}</h3><span class="small muted">${P_[2]}: ${P_[3]}</span></div><p class="small muted" style="margin:4px 0 6px">${F_[3]}</p>${it.length?it.map(gItem).join(''):`<div class="gmempty">El Acuerdo no asigna a este nivel ninguna disposición de ${F_[1].toLowerCase()}.</div>`}`;
+ if(scroll&&innerWidth<980)d.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 /* ---------- Tooltip ---------- */
@@ -1191,8 +1398,8 @@ const tip=$('#tip');
 function tipShow(e,t){tip.textContent=t;tip.style.display='block';const r=tip.getBoundingClientRect();let x=e.clientX+12,y=e.clientY+14;if(x+r.width>innerWidth-8)x=innerWidth-r.width-8;if(y+r.height>innerHeight-8)y=e.clientY-r.height-10;tip.style.left=x+'px';tip.style.top=y+'px'}
 addEventListener('mousemove',e=>{const n=e.target.closest&&e.target.closest('[data-tip]');n?tipShow(e,n.dataset.tip):tip.style.display='none'});
 
-renderResumen();renderActores();renderProcesos();renderSub();renderEv();/* renderAuto(); */renderFuentes();route();
-$('main').addEventListener('click',e=>{const b=e.target.closest('.art[data-art]');if(b)openArt(b.dataset.art)});
+renderResumen();renderActores();renderProcesos();renderGestion();renderSub();renderEv();/* renderAuto(); */renderFuentes();route();
+$('main').addEventListener('click',e=>{const b=e.target.closest('.art[data-art]');if(b)openArt(b.dataset.art);if(e.target.closest('.acs')){$('#artb').innerHTML=ACS_T;$('#artd').showModal()}});
 $('#artx').addEventListener('click',()=>$('#artd').close());
 /* Siglas: la primera mencion de cada tarjeta muestra el significado; todas se aclaran al pasar el cursor o tocar. */
 const GL=Object.fromEntries(SIG);GL.Conalep=GL.CONALEP;
